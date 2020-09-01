@@ -219,7 +219,7 @@ if __name__ == '__main__':
 
 
 '''
-Program output:
+Fuentes' program output:
 Evaluating Algorithm 1
 Accuracy: 0.8172857142857143
 Elapsed time:  0.38397216796875
