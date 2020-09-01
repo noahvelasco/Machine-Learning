@@ -47,10 +47,8 @@ def split_train_test(X,y,percent_train=0.9):
 
     return X[train],X[test], y[train], y[test]
 
-#>>>>>>>Modified find_means
-def find_means(X,y):
-    '''
-    Used in Algorithm 1
+'''
+    find_means() - used for alg 1
     Goal - find the mean image in each of the classes m0,m1,...m9
             Return an array of 10 slots where each slot represents the samples mean image
 
@@ -59,9 +57,10 @@ def find_means(X,y):
         2. - Calculate how many there are of each class
         3. - Find the sum of each samples respective 28x28 slot and save to mean
         4. - divide each slot by the total class
-    '''
-    #means = find_means(X_train,y_train)
-    #Create an array that holds the means of each of the numbers
+'''
+def find_means(X,y):
+    
+
     '''
     X_train (X) are all 90% of random samples (not sample indices)
     y_train (y) are the corresponding outputs of the 90% samples
@@ -96,10 +95,10 @@ def find_means(X,y):
 
     return means
 
-#>>>>>>Modified accuracy
+#accuracy() - calcs the accuracy given the predicted and expected
 def accuracy(y_true,y_pred):
 
-    #y_true and y_pred must be of same size and both contain values that indicate a classification(1,0,9,etc...)
+    #y_true and y_pred are same size and contain values indicating classifications
     similar = 0
 
     for i in range(len(y_true)):
@@ -109,8 +108,7 @@ def accuracy(y_true,y_pred):
 
     return similar/len(y_true)
 
-def classify_nearest_mean(means, X_test):
-    '''
+'''
     For every image xi in the test set, find its Euclidean distance to each of the means,
     and assign it to the class of the closest mean.
 
@@ -121,8 +119,9 @@ def classify_nearest_mean(means, X_test):
         4. Use pred to store index of closest match
         5. Return pred
 
-    '''
+'''
 
+def classify_nearest_mean(means, X_test):
 
     m = np.array(means)
     pred =  np.zeros(len(X_test))#contains len(X_test) slots to store all predictions
@@ -143,24 +142,21 @@ def classify_nearest_mean(means, X_test):
         pred[i] = match
 
         #To test this look at variable explorer
-        print("Sample ",i, " from X_test was closest to mean sample classification value: ", match)
+        #print("Sample ",i, " from X_test was closest to mean sample classification value: ", match)
 
-
-    #pred = 7000 entries
     return np.array(pred)
 
-def classify_nearest_example(X_train,y_train, X_test):
-
-    '''
-    Todo:
-        For every image xi in the test set, find its Euclidean distance to each
-        image in the training set and assign it to the class of the closest image.
+'''
+    classify_nearest_example() - For every image xi in the test set, find its Euclidean distance to each
+                                 image in the training set and assign it to the class of the closest image.
 
     Steps:
         1. Create array 'pred' that will contain indices, where each indice represents a number classification
         2. For every image in test set, find its euclidean distance to each image in the training set
             and insert index of closest image into pred
-    '''
+'''
+
+def classify_nearest_example(X_train,y_train, X_test):
 
     pred =  np.zeros(len(X_test),dtype=int)
 
@@ -183,9 +179,7 @@ def classify_nearest_example(X_train,y_train, X_test):
             pred[i] = y_train[match]
 
         #To test this look at variable explorer
-        print("Sample ",i, " from X_test was closest to X_train sample classification: ", y_train[match])
-
-
+        #print("Sample ",i, " from X_test was closest to X_train sample classification: ", y_train[match])
 
     return np.array(pred)
 
@@ -197,7 +191,6 @@ if __name__ == '__main__':
     # Plot some of the data - Comment section out when developing your program
     plt.close('all')
     display_random_digits(X,n=10)
-
 
     X_train, X_test, y_train, y_test = split_train_test(X,y)
 
@@ -216,7 +209,6 @@ if __name__ == '__main__':
     elapsed_time = time.time() - start
     print('Accuracy:',accuracy(y_test,p2))
     print('Elapsed time: ',elapsed_time)
-
 
 '''
 Fuentes' program output:
