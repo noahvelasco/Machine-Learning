@@ -28,9 +28,37 @@ def confusion_matrix(y_true,y_pred):
         
     return cm
 
-#Modify
+'''
+    precision() - Defined as (also called positive predictive value) is the 
+                    fraction of relevant instances among the retrieved instances [wikipedia] 
+                        
+                Precision = (True Positive)/ (True Positive + False Positive)
+                
+                Goal - Calculate the precision of each classification (0-9)
+                
+                Algorithm: 
+                    1. For each classification go through both arrays(10 times^)
+                        i. Keep count of total matched (True Positive) for each classification and total not matched (False positives)
+                    2. Plug true and false positives into the formula
+
+'''
 def precision(y_true,y_pred,positive_class):
-    return 0.0546543677
+    
+    true_pos = 0
+    false_pos = 0
+    
+    #Could've used y_pred-doesnt matter since same size
+    for i in range(len(y_true)):
+        
+        #if true positive
+        if (y_true[i] == positive_class) and (y_true[i] == y_pred[i]):
+            true_pos += 1
+        
+        #if true negative
+        if (y_true[i] == positive_class) and (y_true[i] != y_pred[i]):
+            false_pos +=1
+   
+    return true_pos / (true_pos + false_pos)
 
 #Modify
 def recall(y_true,y_pred,positive_class):
@@ -40,19 +68,28 @@ def recall(y_true,y_pred,positive_class):
 
 if __name__ == '__main__':
    
-
-    print('\nEvaluating Algorithm 1')
+    
+    #print('\nEvaluating Algorithm 1')
     y_test_a1 =  np.load('y_test_a1.npy')
     pred_a1 =  np.load('pred_a1.npy')
-    #print('Accuracy:  {:.4}'.format(accuracy(y_test_a1,pred_a1)))
+    '''
+    #delete next two lines when done
+    print('Precision')
+    for i in range(np.amax(y_test_a1)+1):
+        precision(y_test_a1,pred_a1,i)
+    '''
+    
+    
+    print('Accuracy:  {:.4}'.format(accuracy(y_test_a1,pred_a1)))
     print('Confusion matrix:')
     print(confusion_matrix(y_test_a1,pred_a1))
     
-    '''
+    
     print('Precision and recall:')
     for i in range(np.amax(y_test_a1)+1):
         print('Positive class {}, precision: {:.4}, recall: {:.4}'.format(i, precision(y_test_a1,pred_a1,i),recall(y_test_a1,pred_a1,i)))
     
+    '''
     print('\nEvaluating Algorithm 2')
     y_test_a2 =  np.load('y_test_a2.npy')
     pred_a2 =  np.load('pred_a2.npy')
