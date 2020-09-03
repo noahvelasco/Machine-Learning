@@ -19,6 +19,8 @@ def accuracy(y_true,y_pred):
                         classified as class j. Ex if cm[4,9]=13 then that means
                         class 4 was mistaken as a 9 13 times.
                         
+                        Note: cm[i,j] != cm[j,i]
+                        
                         Algorithm:
                             1. Iterate through the y_true and y_pred arrays entirely.
                                 i. Increment the value by one in cm[i][j] where i and j 
@@ -37,8 +39,8 @@ def confusion_matrix(y_true,y_pred):
 
 '''
     precision() - Defined as: (also called positive predictive value) is total amount
-                you predicted correct(True Positive) out of the total amount
-                you predicted correct plus total amount you thought you predicted correct (False Positive)
+                you predicted the positive class correctly(True Positive) out of the total amount of positive_class
+                you predicted correctly (True positive) plus total amount of positive_class you thought you predicted the correctly (False Positive)
                         
                 Precision = (True Positive)/ (True Positive + False Positive)
                 false positive = a value predicted as positive but is actually negative
@@ -49,7 +51,7 @@ def confusion_matrix(y_true,y_pred):
                 Algorithm: 
                     1. For each classification go through both arrays(10 times^)
                         i. Keep count of True Positives for each classification 
-                            and total False positives
+                            and total False positives 
                     2. Plug true and false positives into the formula
 
 '''
@@ -75,15 +77,17 @@ def precision(y_true,y_pred,positive_class):
 
 '''
     recall() - Defined as: (also known as sensitivity -wikipedia) is the total 
-                amount of matches predicted right(True Positive) out of 
-                total matches predicted right + total matches predicted wrong(false negatives). 
-                Its used to measure total amount of relevant items[wikipedia].
+                amount you predicted the positive_class correctly(True Positive) out of 
+                total amount of positive_class matches predicted right plus total 
+                matches predicted wrong(false negatives). 
                                 
                 Recall = (True Positive) / (True Positive + False Negative)
+                false negative = a value predicted as not positive_class
+                               = a value that SHOULD be predicted as positive but is actually negative (not positive_class)
                 
                 Goal - Calculate the recall of each classification(0-9)
                 
-                Algorithm(Similar to precision): 
+                Algorithm(Similar to precision but looking at true values rather than predicted for false negatives): 
                     1. For each classification go through both arrays(10 times^)
                         i. Keep count of total True Positives for each 
                             classification and total False negatives
