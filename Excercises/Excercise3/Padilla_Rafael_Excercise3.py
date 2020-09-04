@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import time 
+import math
 
 def split_train_test(X,y,percent_train=0.9):
     ind = np.random.permutation(X.shape[0])
@@ -31,14 +32,18 @@ def classify_nearest_example_fast(X_train,y_train, X_test):
     # Uses formula (X_train - X_test)**2 = X_train**2 - 2*X_train*X_test + X_test**2
     # Each of the 3 elements can be computed without loops. Third term is not necessary
     # Addition of 3 terms is done with broadcasting without loops
+    
     X_train =  X_train.reshape(-1,784)
     X_test =  X_test.reshape(-1,784).T
+    
     dist = np.sum(X_train**2,axis=1).reshape(-1,1) # dist = X_train**2
     dist = dist - 2*np.matmul(X_train,X_test) # dist = X_train**2  - 2*X_train*X_test
     dist = dist + np.sum(X_test**2,axis=0).reshape(1,-1) # dist = X_train**2  - 2*X_train*X_test + X_test**2 - Not really necessary
     dist = np.sqrt(dist) #  Not really necessary
-    nn = np.argmin(dist,axis=0)
     
+    #Fuentes next 2 lines from class
+    dist[np.arange(dist.shape[0]),np.arange(dist.shape[0])] = math.inf
+    nn = np.argmin(dist,axis=0)
     
     '''
     No modifications - still trying to understand his code
@@ -54,17 +59,11 @@ if __name__ == '__main__':
     X=X[ind[:n]]
     y=y[ind[:n]]
     
-    '''
-    print('Evaluating Algorithm 2')
-    start = time.time()
-    '''
-    z = X.reshape(-1,784).T
-    
-    #p2 = classify_nearest_example_fast(X,y,X)
     
 
-    
-    '''
+    print('Evaluating Algorithm 2')
+    start = time.time()
+    p2 = classify_nearest_example_fast(X,y,X)
     elapsed_time = time.time() - start 
     print('Accuracy:',accuracy(y,p2))
     print('Elapsed time: ',elapsed_time)
@@ -73,5 +72,4 @@ if __name__ == '__main__':
     print('Precision and recall:')
     for i in range(np.amax(y)+1):
         print('Positive class {}, precision: {:.4f}, recall: {:.4f}'.format(i, precision(y,p2,i),recall(y,p2,i)))
-    '''
    
