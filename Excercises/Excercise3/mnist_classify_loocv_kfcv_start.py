@@ -82,48 +82,62 @@ def classify_nearest_example_kfcv(X,y,k=5):
     #pred will store all the predictions from X
     pred = np.zeros_like(y) 
     
-    #A group that will contain all k groups data
-    group_X = np.zeros_like(y)
+    #A group of groups - each group represents a list numpy array of data
+    group_X = [] #np.zeros_like(y)
     
-    #A group that will contain all k groups data outputs in respective order
-    group_y = np.zeros_like(y)
+    #A group of groups - Each group represents data outputs in respective order of X groups
+    group_y = []#np.zeros_like(y)
     
-    #currGroup keeps track of what group to add data to
-    currGroup = 0
     #lowerBound monitors what index to start adding values from
     lowerBound = 0
-    #Counter is used in helping find the upperbound - it increments up until k-1
-    counter = 0
     #upperBound monitors what index to add values up until; counter is
-    upperBound =  int(X.shape[0] / (k - counter))
+    upperBound =  int(X.shape[0] / (k))
        
-    
+    #Seperate the dataset into groups
     for i in range(k):
-        
-        print(X[lowerBound:upperBound])
-        
-        #group_X[currGroup] = X[lowerBound:upperBound]
-        #group_y[currGroup] = y[lowerBound:upperBound]
-        
-        #Go to next group
-        currGroup += 1
-        
-        #update lower bound
-        lowerBound = upperBound
-        
-        #update variable to update upperbound
-        counter += 1
     
+        #used for testing - calculates the lower and upper bound indices to choose from
+        print('i = ', i , '| lowB = ', lowerBound , '| upperB = ', upperBound )
+       
+        group_X.append(X[lowerBound:upperBound])
+        group_y.append(y[lowerBound:upperBound])
+    
+        #update lower and upperbounds
+        lowerBound = upperBound
+        upperBound +=  int(X.shape[0] / (k))        
         
     '''
-    for i in range(k):
-        
+    #Used for testing - check to see if I grouped the data into even groups
+    print(len(group_X[0]), len(group_y[0]))
+    print(len(group_X[1]), len(group_y[1]))
+    print(len(group_X[2]), len(group_y[2]))
+    print(len(group_X[3]), len(group_y[3]))
+    print(len(group_X[4]), len(group_y[4]))
+    '''
+    
+    '''
+    To get groups for training and groups for testing:
+        Training: 
+            1. Calculate the group indices for training - leave one group out for testing
+            2. Create new data set that is a concatenated training groups for X and y
+            3. Send that data to method classify_nearest_example_fast()
+        Testing:
+            1. Choose testing group in ascending order
+            2. Send that group to classify_nearest_example_fast()
+            
+        Use index variables to monitor index for training
+    
+    '''
+    
+    trainGroupIndex = 0
+    
+    for i in range(k):  
         train = np.arange(len(y)) 
         test = np.arange(len(y))
         #pred[test] = classify_nearest_example_fast(X[train],y[train], X[test])
-    '''
     
     return pred
+    #return pred
 
 if __name__ == '__main__':
     # Read the data
