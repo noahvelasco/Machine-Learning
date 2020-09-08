@@ -93,9 +93,8 @@ def classify_nearest_example_kfcv(X,y,k=5):
     #upperBound monitors what index to add values up until; counter is
     upperBound =  int(X.shape[0] / (k))
        
-    #Seperate the dataset into groups
+    #Step 1
     for i in range(k):
-    
         
         #used for testing - calculates the lower and upper bound indices to choose from
         #print('i = ', i , '| lowB = ', lowerBound , '| upperB = ', upperBound )
@@ -106,22 +105,12 @@ def classify_nearest_example_kfcv(X,y,k=5):
         #update lower and upperbounds
         lowerBound = upperBound
         upperBound +=  int(X.shape[0] / (k))        
-        
-    '''
-    #Used for testing - check to see if I grouped the data into even groups
-    print(len(group_X[0]), len(group_y[0]))
-    print(len(group_X[1]), len(group_y[1]))
-    print(len(group_X[2]), len(group_y[2]))
-    print(len(group_X[3]), len(group_y[3]))
-    print(len(group_X[4]), len(group_y[4]))
-    '''
     
     '''
-    To get groups for training and groups for testing:
+    Step 2 - To get groups for training and groups for testing:
         Training: 
-            1. Calculate the group indices for training - leave one group out for testing
-            2. Create new data set that is a concatenated training groups for X and y
-            3. Send that data to method classify_nearest_example_fast()
+            1. Keep track of which group is test group
+            2. Get all indices that are not from test group (values range from 0-9,999)
         Testing:
             1. Choose testing group in ascending order
             2. Send that group to classify_nearest_example_fast()
@@ -129,8 +118,6 @@ def classify_nearest_example_kfcv(X,y,k=5):
         Use index variables to monitor index for training
     
     '''
-    
-   
     #Variable that monitors which group is the test group in group_X; ranges 1-5
     testGroupIndex = 0
     
@@ -140,7 +127,7 @@ def classify_nearest_example_kfcv(X,y,k=5):
         #Variable to monitor which group we are in group_X; ranges from 1-5
         currGroupIndex = 0
        
-        #A counter monitoring which index we are at out of 10,000 samples
+        #A counter monitoring which index we are at out of 10,000 samples; starts over when choosing a new test group
         indexCounter = 0
         
         #List containing all the indices of all test samples; contains 2,000 values indicating indices
@@ -163,20 +150,14 @@ def classify_nearest_example_kfcv(X,y,k=5):
             
             
             currGroupIndex += 1
+        
+        #Train and test now - this line is executed k times where k=# of groups
         pred[test] = classify_nearest_example_fast(X[train],y[train], X[test])    
         
+        #Iterate again and choose the next test group
         testGroupIndex +=1
-            
-        #Used for testing - used to see     
-        #print(">>Iteration: " , i)    
-        #print("Test Length ", len(test))
-        #print("Train Length", len(train))
-            
-            
         
-            
-        
-    
+    #Step 3
     return pred
 
 if __name__ == '__main__':
