@@ -28,6 +28,7 @@ def recall(y_true,y_pred,positive_class):
     true_p = np.sum(y_true==positive_class)
     return tp/true_p
 
+#classify_nearest_example_fast() - an alg that calculates the closest classification of the test data. Given code. 
 def classify_nearest_example_fast(X_train,y_train, X_test):
     # Uses formula (X_train - X_test)**2 = X_train**2 - 2*X_train*X_test + X_test**2
     # Each of the 3 elements can be computed without loops. Third term is not necessary
@@ -41,6 +42,7 @@ def classify_nearest_example_fast(X_train,y_train, X_test):
     nn = np.argmin(dist,axis=0)
     return y_train[nn]
 
+#Already Done
 def classify_nearest_example_loocv(X,y):
     X =  X.reshape(-1,784)
     dist = np.sum(X**2,axis=1).reshape(-1,1) # dist = X_train**2
@@ -51,13 +53,68 @@ def classify_nearest_example_loocv(X,y):
     nn = np.argmin(dist,axis=0)
     return y[nn]
 
+'''
+
+classify_nearest_example_kfcv() funtion: 
+
+k-fold class validation - A statistical method thats main purpose is to evaluate generalization performance. 
+                        Instead of splitting into 75% training and 25% testing we are going to make 
+                        'k' groups or folds and train on k-1 groups and test the kth group that was left out. This is an 
+                        iterative process so we will test each group at least once and train the remaining 
+                        groups. For ex. we will train groups 2,3,4,5 and test group 1 then we will train groups 1,3,4,5
+                        and test group 2 and so on. We will repeat the process until we test all the groups.
+                        
+                        Goal: Use kfcv to predict all the values from x 
+                            
+                        Given(Parameters passed into this function): 
+                            > X = A (n,28,28) array that contains all samples
+                            > y = The X array samples' respective outputs
+                            > k = 5 indicates the number of groups we are splitting all data into
+                            
+                        My Algorithm:
+                            1. Split X into K-Folds 
+                            2. Send Train groups and Test group to given method 'classify_nearest_example_fast()'
+                            3. Return pred[] which is an array of predictions from prediction the held out group
+
+'''
 def classify_nearest_example_kfcv(X,y,k=5):
-    # Modify this function
-    pred = np.zeros_like(y)
+    
+    #pred will store all the predictions from X
+    pred = np.zeros_like(y) 
+    
+    #A group that will contain all k groups data
+    groupX = np.zeros_like(y)
+    
+    #A group that will contain all k groups data outputs in respective order
+    groupY = np.zeros_like(y)
+    
+    
+    #Keep track of the current group you are adding values to
+    currGroup = 0;
+
+    #Counter keeps track of what index 'for' is at in Data set; It indicates when to switch groups to add vals to
+    counter = 0
+    
+    #upperBound is a value indicating all values before get added to currGroup
+    upperBound = 10 / (k - counter)
+    
+    #Split the data set into 5 groups - group for data and group for outputs
+    for i in range(len(X)):
+        
+        if( counter == upperBound):
+            currGroup += 1
+        
+        groupX[] 
+    
+    
+    '''
     for i in range(k):
-        train = np.arange(len(y))
+        
+        train = np.arange(len(y)) 
         test = np.arange(len(y))
-        pred[test] = classify_nearest_example_fast(X[train],y[train], X[test])
+        #pred[test] = classify_nearest_example_fast(X[train],y[train], X[test])
+    '''
+    
     return pred
 
 if __name__ == '__main__':
@@ -70,6 +127,8 @@ if __name__ == '__main__':
     X=X[ind[:n]]
     y=y[ind[:n]]
     
+    
+    '''
     print('Evaluating Algorithm 2')
     start = time.time()
     print('Leave-one-out cross validation')
@@ -82,9 +141,12 @@ if __name__ == '__main__':
     print('Precision and recall:')
     for i in range(np.amax(y)+1):
         print('Positive class {}, precision: {:.4f}, recall: {:.4f}'.format(i, precision(y,p2,i),recall(y,p2,i)))
-    
+    #------------------------------------------------------------------------------------------------------------
     print('k-fold cross validation')
+    #start = time.time()
+    '''
     p2 = classify_nearest_example_kfcv(X,y)
+    '''
     elapsed_time = time.time() - start 
     print('Accuracy:',accuracy(y,p2))
     print('Elapsed time: ',elapsed_time)
@@ -93,7 +155,7 @@ if __name__ == '__main__':
     print('Precision and recall:')
     for i in range(np.amax(y)+1):
         print('Positive class {}, precision: {:.4f}, recall: {:.4f}'.format(i, precision(y,p2,i),recall(y,p2,i)))
-    
+    '''
 '''
 Evaluating Algorithm 2
 Leave-one-out cross validation
