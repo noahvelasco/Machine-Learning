@@ -96,8 +96,9 @@ def classify_nearest_example_kfcv(X,y,k=5):
     #Seperate the dataset into groups
     for i in range(k):
     
+        
         #used for testing - calculates the lower and upper bound indices to choose from
-        print('i = ', i , '| lowB = ', lowerBound , '| upperB = ', upperBound )
+        #print('i = ', i , '| lowB = ', lowerBound , '| upperB = ', upperBound )
        
         group_X.append(X[lowerBound:upperBound])
         group_y.append(y[lowerBound:upperBound])
@@ -129,15 +130,54 @@ def classify_nearest_example_kfcv(X,y,k=5):
     
     '''
     
-    trainGroupIndex = 0
+   
+    #Variable that monitors which group is the test group in group_X; ranges 1-5
+    testGroupIndex = 0
     
-    for i in range(k):  
-        train = np.arange(len(y)) 
-        test = np.arange(len(y))
-        #pred[test] = classify_nearest_example_fast(X[train],y[train], X[test])
+    #go through all groups 5 times - each time update testGroup
+    for i in range(k):
+        
+        #Variable to monitor which group we are in group_X; ranges from 1-5
+        currGroupIndex = 0
+       
+        #A counter monitoring which index we are at out of 10,000 samples
+        indexCounter = 0
+        
+        #List containing all the indices of all test samples; contains 2,000 values indicating indices
+        test = []
+        
+        #List containing all the indices of all train samples; contains 8,000 values indicating indices
+        train = []
+        
+        #Iterate over all groups and seperate train and test indices
+        for j in range(len(group_X)):
+            
+            #Access each sample in each group ;2000 samples
+            for z in range(len(group_X[j])):
+                #print(indexCounter)
+                if currGroupIndex == testGroupIndex:
+                    test.append(indexCounter)
+                else:
+                    train.append(indexCounter)
+                indexCounter += 1
+            
+            
+            currGroupIndex += 1
+        pred[test] = classify_nearest_example_fast(X[train],y[train], X[test])    
+        
+        testGroupIndex +=1
+            
+        #Used for testing - used to see     
+        #print(">>Iteration: " , i)    
+        #print("Test Length ", len(test))
+        #print("Train Length", len(train))
+            
+            
+        
+            
+        
     
     return pred
-    #return pred
 
 if __name__ == '__main__':
     # Read the data
@@ -150,7 +190,7 @@ if __name__ == '__main__':
     y=y[ind[:n]]
     
     
-    '''
+    
     print('Evaluating Algorithm 2')
     start = time.time()
     print('Leave-one-out cross validation')
@@ -163,12 +203,11 @@ if __name__ == '__main__':
     print('Precision and recall:')
     for i in range(np.amax(y)+1):
         print('Positive class {}, precision: {:.4f}, recall: {:.4f}'.format(i, precision(y,p2,i),recall(y,p2,i)))
+    
     #------------------------------------------------------------------------------------------------------------
     print('k-fold cross validation')
-    #start = time.time()
-    '''
+    start = time.time()
     p2 = classify_nearest_example_kfcv(X,y)
-    '''
     elapsed_time = time.time() - start 
     print('Accuracy:',accuracy(y,p2))
     print('Elapsed time: ',elapsed_time)
@@ -177,7 +216,7 @@ if __name__ == '__main__':
     print('Precision and recall:')
     for i in range(np.amax(y)+1):
         print('Positive class {}, precision: {:.4f}, recall: {:.4f}'.format(i, precision(y,p2,i),recall(y,p2,i)))
-    '''
+
 '''
 Evaluating Algorithm 2
 Leave-one-out cross validation
