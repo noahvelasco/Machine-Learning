@@ -83,30 +83,38 @@ def classify_nearest_example_kfcv(X,y,k=5):
     pred = np.zeros_like(y) 
     
     #A group that will contain all k groups data
-    groupX = np.zeros_like(y)
+    group_X = np.zeros_like(y)
     
     #A group that will contain all k groups data outputs in respective order
-    groupY = np.zeros_like(y)
+    group_y = np.zeros_like(y)
     
-    
-    #Keep track of the current group you are adding values to
-    currGroup = 0;
-
-    #Counter keeps track of what index 'for' is at in Data set; It indicates when to switch groups to add vals to
+    #currGroup keeps track of what group to add data to
+    currGroup = 0
+    #lowerBound monitors what index to start adding values from
+    lowerBound = 0
+    #Counter is used in helping find the upperbound - it increments up until k-1
     counter = 0
+    #upperBound monitors what index to add values up until; counter is
+    upperBound =  int(X.shape[0] / (k - counter))
+       
     
-    #upperBound is a value indicating all values before get added to currGroup
-    upperBound = 10 / (k - counter)
-    
-    #Split the data set into 5 groups - group for data and group for outputs
-    for i in range(len(X)):
+    for i in range(k):
         
-        if( counter == upperBound):
-            currGroup += 1
+        print(X[lowerBound:upperBound])
         
-        groupX[] 
+        #group_X[currGroup] = X[lowerBound:upperBound]
+        #group_y[currGroup] = y[lowerBound:upperBound]
+        
+        #Go to next group
+        currGroup += 1
+        
+        #update lower bound
+        lowerBound = upperBound
+        
+        #update variable to update upperbound
+        counter += 1
     
-    
+        
     '''
     for i in range(k):
         
