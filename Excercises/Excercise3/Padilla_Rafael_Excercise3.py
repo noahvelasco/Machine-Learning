@@ -3,6 +3,11 @@ import matplotlib.pyplot as plt
 import time 
 import math 
 
+"""
+Excercise 3 - Goal is to create the k-fold cross validation funtion
+"""
+
+
 def split_train_test(X,y,percent_train=0.9):
     ind = np.random.permutation(X.shape[0])
     train = ind[:int(X.shape[0]*percent_train)]
@@ -54,7 +59,6 @@ def classify_nearest_example_loocv(X,y):
     return y[nn]
 
 '''
-
 classify_nearest_example_kfcv() funtion: 
 
 k-fold class validation - A statistical method thats main purpose is to evaluate generalization performance. 
@@ -95,10 +99,7 @@ def classify_nearest_example_kfcv(X,y,k=5):
        
     #Step 1
     for i in range(k):
-        
-        #used for testing - calculates the lower and upper bound indices to choose from
-        #print('i = ', i , '| lowB = ', lowerBound , '| upperB = ', upperBound )
-       
+    
         group_X.append(X[lowerBound:upperBound])
         group_y.append(y[lowerBound:upperBound])
     
@@ -169,8 +170,6 @@ if __name__ == '__main__':
     ind = np.random.permutation(len(y))
     X=X[ind[:n]]
     y=y[ind[:n]]
-    
-    
     
     print('Evaluating Algorithm 2')
     start = time.time()
