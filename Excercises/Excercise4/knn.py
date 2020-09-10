@@ -7,7 +7,7 @@ Goal of this code was to modify starter code by adding:
     1 - Manhattan distance function
 '''
 class knn(object):
-    def __init__(self,k=3,weighted=True,classify=True, distance =  'Manhattan'):  
+    def __init__(self,k=3,weighted=True,classify=True, distance='Manhattan'):  
         self.k = k
         self.weighted = weighted
         self.classify = classify
@@ -100,13 +100,10 @@ if __name__ == "__main__":
     y=y[ind[:n]]
     X_train, X_test, y_train, y_test = split_train_test(X,y)
     
-    
     #print(">>> Xtrain length - ", len(X_train)) #Is 9000 if n = 10,000
     #print(">>> ytrain length - ", len(y_train)) #Is 9000 if n = 10,000
     #print(">>> X_test length - ", len(X_test)) #Is 1,000 if n = 10,000
 
-    
-    
     #---------- MODEL 1  = EUCLIDEAN? ---------------
     model = knn()
     start = time.time()
@@ -134,4 +131,21 @@ if __name__ == "__main__":
     elapsed_time = time.time()-start
     print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
     print('Accuracy:',np.sum(pred==y_test)/len(y_test))
+    
+    
+    
+    
+'''
+>>> AFTER FINISHING ONLY MANHATTAN DISTANCE
+    
+MNIST dataset
+Elapsed_time training  0.000000 
+Elapsed_time testing  131.526172 
+Accuracy: 0.934
+Elapsed_time training  0.000000 
+Elapsed_time testing  150.901918 
+Accuracy: 0.931
+
+'''
+    
     
