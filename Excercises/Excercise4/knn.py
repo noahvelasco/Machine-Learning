@@ -22,6 +22,10 @@ class knn(object):
         # where dist[i,j] is the Manhattan distance from training example i to test example j
         # Your code goes here
         dist = 0
+        
+        
+        
+        
         return  dist
     
     def fit(self,x,y): 
@@ -52,7 +56,7 @@ class knn(object):
         else:
             pred = np.sum(self.y_train[nn]*w,axis=0)
         return pred
-   
+
 def split_train_test(X,y,percent_train=0.9):
     ind = np.random.permutation(X.shape[0])
     train = ind[:int(X.shape[0]*percent_train)]
