@@ -160,7 +160,7 @@ if __name__ == "__main__":
     y = np.load('mnist_y.npy')
     
     n = X.shape[0] # Use all examples
-    n = 10000    # Use a few examples
+    n = 1000    # Use a few examples
     
     ind = np.random.permutation(len(y))
     X=X[ind[:n]]
