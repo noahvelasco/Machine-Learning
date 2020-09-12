@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import math
 
 class knn(object):
     def __init__(self,k=3,weighted=True,classify=True, distance = 'Euclidean'):  
@@ -70,19 +71,33 @@ def split_train_test(X,y,percent_train=0.9):
     test = ind[int(X.shape[0]*percent_train):]
     return X[train],X[test], y[train], y[test]    
 
+'''
+My implementation of nearest_neighbors(X,x,k) returns 
+the indices of the k-nearest neighbors of example x in dataset X.
+
+    1. Let x be the test sample
+    2. Find euc dist between test sample  x and all train samples 
+    3. Get k closest distances of x from X
+
+'''
 def nearest_neighbors(X,x,k):
     
-    #Take small x and find it's k closest neighbors in data set X
-    dist = np.sum(X**2,axis=1).reshape(-1,1) - 2*np.matmul(X,x.T) + np.sum(x.T**2,axis=0).reshape(1,-1) 
-    nn = np.argsort(dist,axis=1)
+    #Step 1 is already done since it is passed as parameter 
+     
+    #will contain len(X) euclidean distances - will get first 5 after sorting all of them later
+    allDistances = np.zeros(len(X))
     
-    print(dist.shape)       #prints > (9000, 9000)
-    print(nn[:,1:k+1].shape)#prints > (9000 ,5)
+    #Step 2
+    for i in range(len(X)):
+        
+        dist = math.sqrt(np.sum(pow(abs(x - X[i]),2)))
+        allDistances[i] = dist
+
+    #Step 3 - take out the first sample because it is 0 which is the sample comparing it to itself when sorted and get following k values
+    nn = np.argsort(allDistances)[1:k+1]
     
-    return []#nn[:,1:k+1]   
-    
-    
-    return np.zeros(k,dtype=int)
+    #My nn graph is done ; Is an np array with the k smallest euclidean distances (k closest neighbors) to x
+    return nn
     
 def graph_nearest_neighbors(x,G,k,r=20,t=20):
     # Returns the indices of the k-nearest neighbors of x
@@ -93,8 +108,7 @@ if __name__ == "__main__":
     X = np.load('mnist_X.npy').astype(np.float32).reshape(-1,28*28)
     y = np.load('mnist_y.npy')
     
-    n = X.shape[0] # Use all examples
-    n = 10000      # Use a few examples
+    n = 10000      # Use a few examples - The bigger the n the more accurate your readings will be
     
     ind = np.random.permutation(len(y))
     X=X[ind[:n]]
@@ -135,7 +149,8 @@ if __name__ == "__main__":
     print('kd-tree root example: {}, attribute: {}, threshold: {}'.format(x,att,X_train[r,att]))
     ''' 
 
-    #nng =  nn_graph(X_train,10)
+    
+    nng =  nn_graph(X_train,10)
     
     sample = np.random.randint(X_train.shape[0], size=10)
     
@@ -145,17 +160,25 @@ if __name__ == "__main__":
         for a in y_train[nng[n]]:
             print(a,end=' ')
         print()
-
+        
+    #gets 10 random samples(examples) from the n sized test set 
     sample = np.random.randint(X_test.shape[0], size=10)
     k=5
     
+    print("************TASK 1 FROM PDF************")
     print('Nearest neighbors using exhaustive search')
     for i in sample:
         nn = nearest_neighbors(X_train,X_test[i],k)
-        print('Nearest neighbors of test example',i)
+        
+        #Modified to give sample values(0-9) instead of indices       
+        
+        #print('Nearest neighbors of test example',i)#Fuentes
+        print('Nearest neighbors of test example', y_test[i])#Modified
         for a in nn:
-            print(a,end=' ')
+            #print(a,end=' ')#Fuents
+            print(y_train[a],end=' ')#Modified
         print()
+    print('**********************************')
     
     '''
     print('Nearest neighbors using graph approximation')    
