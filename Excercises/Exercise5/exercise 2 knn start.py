@@ -76,8 +76,8 @@ def nearest_neighbors(X,x,k):
     dist = np.sum(X**2,axis=1).reshape(-1,1) - 2*np.matmul(X,x.T) + np.sum(x.T**2,axis=0).reshape(1,-1) 
     nn = np.argsort(dist,axis=1)
     
-    print(dist.shape)
-    print(nn[:,1:k+1].shape)
+    print(dist.shape)       #prints > (9000, 9000)
+    print(nn[:,1:k+1].shape)#prints > (9000 ,5)
     
     return []#nn[:,1:k+1]   
     

@@ -5,6 +5,7 @@ import math
 '''
 Goal of this code was to modify starter code by adding:
     1 - Manhattan distance function
+    2 - Cacluate the sample 
 '''
 class knn(object):
     def __init__(self,k=3,weighted=True,classify=True, distance='Manhattan'):  
@@ -78,7 +79,71 @@ class knn(object):
             pred = np.argmax(vote,axis=1)
         else:
             pred = np.sum(self.y_train[nn]*w,axis=0)
-        return pred
+        return pred       
+        
+'''
+    root_kd(X) that returns the example that would be at the root
+    of a k-d tree to classify data set X (use MNIST as an example). To do this, first 
+    find the attribute with the highest variance, and then return the example that has \
+    the median value for that attribute in the dataset.
+'''
+def rootX(X):
+    
+    #Stores higheset variance samples' index
+    HighestVar_SampleIndex = 0
+    
+    #Find attribute with highest variance
+    for i in range(len(X[0])):
+        
+        #array[ : , i ] = FOR 2D ARRAYS -> all rows values that are in column i OR just column i
+        if np.var(X[:,HighestVar_SampleIndex]) < np.var(X[:,i]):
+            HighestVar_SampleIndex = i
+            
+    #sort the attribute column of highest variance - len(highestVarCol) = 10000
+    highestVarCol = np.sort(X[:,HighestVar_SampleIndex])  
+    
+    #Get the the median of that column
+    medianVal = np.median(highestVarCol)
+    
+    #A variable that will store the root which is a row in X
+    root = []
+    
+    #returns the first row that has the median value for that attribute(HighestVar_SampleIndex)
+    for i in range(len(X)):
+        
+        #if row at col (HighestVar_SampleIndex) = medianVal return that row
+        if X[i][HighestVar_SampleIndex] == medianVal:
+            root = X[i]
+            break
+        
+    return root
+    
+'''
+Write the function nn_graph(X,k) that returns the k-nearest neighbor graph of dataset X. 
+The function should return a X.shape[0] by k array of ints, where the elements in row i are 
+the indices of the nearest neighbors of example i in the dataset.
+'''
+def nn_graph(X,k): 
+
+    
+    '''
+    1. Get x - test sample 
+    2. Find euc dist between test sample and all train samples 
+    3. Get k closest distances
+    
+    
+    []
+    
+    
+    '''
+    #10,000 x 5
+    
+    
+    
+    
+    
+    
+    return 0
 
 def split_train_test(X,y,percent_train=0.9):
     ind = np.random.permutation(X.shape[0])
@@ -103,8 +168,17 @@ if __name__ == "__main__":
     #print(">>> Xtrain length - ", len(X_train)) #Is 9000 if n = 10,000
     #print(">>> ytrain length - ", len(y_train)) #Is 9000 if n = 10,000
     #print(">>> X_test length - ", len(X_test)) #Is 1,000 if n = 10,000
-
-    #---------- MODEL 1  = EUCLIDEAN? ---------------
+    
+    #----------Root----------------------
+    root = rootX(X)
+    print('REACHED END OF FINDING ROOT')
+    #------------------------------------
+    
+    '''
+    
+    #Model 1 and Model 2 are both manhattan dist
+    
+    #---------- MODEL 1 ---------------
     model = knn()
     start = time.time()
     model.fit(X_train, y_train)
@@ -113,12 +187,12 @@ if __name__ == "__main__":
     print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
     
     start = time.time()       
-    pred = model.predict(X_test)
+    pred = model.predict(X_test)    
     elapsed_time = time.time()-start
     print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
     print('Accuracy:',np.sum(pred==y_test)/len(y_test))
     
-    #---------- MODEL 2 = MANHATTAN --------------
+    #---------- MODEL 2 --------------
     model = knn(weighted=False)
     start = time.time()
     model.fit(X_train, y_train)
@@ -132,7 +206,7 @@ if __name__ == "__main__":
     print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
     print('Accuracy:',np.sum(pred==y_test)/len(y_test))
     
-    
+    '''
     
     
 '''
