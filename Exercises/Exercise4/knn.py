@@ -5,7 +5,7 @@ import math
 '''
 Goal of this code was to modify starter code by adding:
     1 - Manhattan distance function
-    2 - Cacluate the root of hypothetical kd tree
+    2 - Cacluate the root of hypothetical kd tree from the dataset
     3 - Calculate the NN Graph 
 '''
 class knn(object):
@@ -175,16 +175,16 @@ if __name__ == "__main__":
     #print(">>> ytrain length - ", len(y_train)) #Is 9000 if n = 10,000
     #print(">>> X_test length - ", len(X_test)) #Is 1,000 if n = 10,000
     
-    print(">Total data samples being used: ", n)
+    print(">Total data samples being used:", n)
     
     #----------Root----------------------
     #As n approaches 10,000 the root will converge to index 378
     root,sampleNum = rootX(X)
-    print('>Root is at index:', sampleNum)
+    print('>Attribute (pixel) with highest variant is at column index:', sampleNum)
     #------------------------------------
     
     #----------NN Graph----------------------
-    print("Calculating NN graph ... ")
+    print("Calculating NN graph... ")
     nngraph,nnGraphComparison = nn_graph(X,5)
     print('>NN Graph of mine vs Fuentes are same:', nnGraphComparison )
     #------------------------------------
