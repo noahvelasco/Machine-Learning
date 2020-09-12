@@ -116,7 +116,6 @@ the indices of the nearest neighbors of example i in the dataset.
 '''
 def nn_graph(X,k): 
 
-    
     '''
     1. Let first sample in X be x ; x is a test sample 
     2. Find euc dist between test sample and all train samples 
@@ -124,7 +123,7 @@ def nn_graph(X,k):
     4. Repeat process but let x be the next sample in set until end of X
     
     '''
-    nnGraph= np.zeros((X.shape[0],k))
+    nnGraphNoah = np.zeros((X.shape[0],k))
     
     #4
     for i in range(len(X)):
@@ -136,16 +135,22 @@ def nn_graph(X,k):
         
         for j in range(len(X)):
             
-            if i != j:
-                
                 #2
-                dist = math.sqrt(pow(np.sum(abs(x - X[j])),2))
+                dist = math.sqrt(np.sum(pow(abs(x - X[j]),2)))
                 allDistances[j] = dist
-    
         #3
-        nnGraph[i] = np.argsort(allDistances)[:5]
+        #take out the first sample because it is 0 which is the sample comparing it to itself when sorted
+        nnGraphNoah[i] = np.argsort(allDistances)[1:k+1]
     
-    return nnGraph
+    #My nn graph should be done by this point
+    
+    #Calculate fuentes nn graph
+    dist = np.sum(X**2,axis=1).reshape(-1,1) - 2*np.matmul(X,X.T) + np.sum(X.T**2,axis=0).reshape(1,-1)    
+    nn = np.argsort(dist,axis=1)
+    nngraphFuentes = nn[:,1:k+1]
+    
+    #Return my graph and graph comparison to see if mine and fuentes' nn graphs match
+    return nnGraphNoah ,np.array_equal(nnGraphNoah, nngraphFuentes)
 
 def split_train_test(X,y,percent_train=0.9):
     ind = np.random.permutation(X.shape[0])
@@ -159,8 +164,7 @@ if __name__ == "__main__":
     X = np.load('mnist_X.npy').astype(np.float32).reshape(-1,28*28)
     y = np.load('mnist_y.npy')
     
-    n = X.shape[0] # Use all examples
-    n = 1000    # Use a few examples
+    n = 5000 # Use all examples
     
     ind = np.random.permutation(len(y))
     X=X[ind[:n]]
@@ -171,48 +175,49 @@ if __name__ == "__main__":
     #print(">>> ytrain length - ", len(y_train)) #Is 9000 if n = 10,000
     #print(">>> X_test length - ", len(X_test)) #Is 1,000 if n = 10,000
     
-    print("Total data samples being used: ", n)
+    print(">Total data samples being used: ", n)
     
     #----------Root----------------------
+    #As n approaches 10,000 the root will converge to index 378
     root,sampleNum = rootX(X)
-    print('Root is sample', sampleNum)
+    print('>Root is at index:', sampleNum)
     #------------------------------------
     
     #----------NN Graph----------------------
-    print("Calculating NN graph for every sample in data set")
-    nngraph = nn_graph(X,5)
-    print('NN Graph Calculated')
+    print("Calculating NN graph ... ")
+    nngraph,nnGraphComparison = nn_graph(X,5)
+    print('>NN Graph of mine vs Fuentes are same:', nnGraphComparison )
     #------------------------------------
 
-    #Model 1 and Model 2 are both euc and man dist respectively
+    #Model 1 and Model 2 are both euclidean and manhattan dist respectively
     
     #---------- MODEL 1 ---------------
     model = knn(distance='Euclidean')
-    print("> Calculating ", model.distance , " distance")
+    print("Calculating", model.distance , "distance...")
     start = time.time()
     model.fit(X_train, y_train)
     elapsed_time = time.time()-start
     
-    print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
+    print('>Elapsed_time training  {0:.6f} '.format(elapsed_time))  
     
     start = time.time()       
     pred = model.predict(X_test)    
     elapsed_time = time.time()-start
-    print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
-    print('Accuracy:',np.sum(pred==y_test)/len(y_test))
+    print('>Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
+    print('>Accuracy:',np.sum(pred==y_test)/len(y_test))
     
     #---------- MODEL 2 --------------
     model = knn(weighted=False, distance='Manhattan')
-    print("> Calculating ", model.distance , " distance")
+    print("Calculating", model.distance , "distance...")
     start = time.time()
     model.fit(X_train, y_train)
     elapsed_time = time.time()-start
     
-    print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
+    print('>Elapsed_time training  {0:.6f} '.format(elapsed_time))  
     
     start = time.time()       
     pred = model.predict(X_test)
     elapsed_time = time.time()-start
-    print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
-    print('Accuracy:',np.sum(pred==y_test)/len(y_test))   
+    print('>Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
+    print('>Accuracy:',np.sum(pred==y_test)/len(y_test))   
     
