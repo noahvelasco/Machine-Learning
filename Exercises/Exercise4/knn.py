@@ -117,7 +117,6 @@ def rootX(X):
             break
         
     return root
-    
 '''
 Write the function nn_graph(X,k) that returns the k-nearest neighbor graph of dataset X. 
 The function should return a X.shape[0] by k array of ints, where the elements in row i are 
