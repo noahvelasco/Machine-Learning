@@ -5,10 +5,11 @@ import math
 '''
 Goal of this code was to modify starter code by adding:
     1 - Manhattan distance function
-    2 - Cacluate the sample 
+    2 - Cacluate the root of hypothetical kd tree
+    3 - Calculate the NN Graph 
 '''
 class knn(object):
-    def __init__(self,k=3,weighted=True,classify=True, distance='Manhattan'):  
+    def __init__(self,k=3,weighted=True,classify=True, distance='Euclidean'):  
         self.k = k
         self.weighted = weighted
         self.classify = classify
@@ -99,24 +100,15 @@ def rootX(X):
         if np.var(X[:,HighestVar_SampleIndex]) < np.var(X[:,i]):
             HighestVar_SampleIndex = i
             
-    #sort the attribute column of highest variance - len(highestVarCol) = 10000
-    highestVarCol = np.sort(X[:,HighestVar_SampleIndex])  
+    #sort the attribute column (getting indices) of highest variance - len(highestVarCol) = len(X) = n
+    highestVarianceCol_Sorted = np.argsort(X[:,HighestVar_SampleIndex])
     
-    #Get the the median of that column
-    medianVal = np.median(highestVarCol)
+    #Get the example with the median value for that attribute
+    medianValExample = highestVarianceCol_Sorted[(X.shape[0]+1)//2]
     
-    #A variable that will store the root which is a row in X
-    root = []
+    #return the example and the column with the highest variance 
+    return medianValExample, HighestVar_SampleIndex
     
-    #returns the first row that has the median value for that attribute(HighestVar_SampleIndex)
-    for i in range(len(X)):
-        
-        #if row at col (HighestVar_SampleIndex) = medianVal return that row
-        if X[i][HighestVar_SampleIndex] == medianVal:
-            root = X[i]
-            break
-        
-    return root
 '''
 Write the function nn_graph(X,k) that returns the k-nearest neighbor graph of dataset X. 
 The function should return a X.shape[0] by k array of ints, where the elements in row i are 
@@ -126,23 +118,34 @@ def nn_graph(X,k):
 
     
     '''
-    1. Get x - test sample 
+    1. Let first sample in X be x ; x is a test sample 
     2. Find euc dist between test sample and all train samples 
-    3. Get k closest distances
-    
-    
-    []
-    
+    3. Get k closest distances of x from X
+    4. Repeat process but let x be the next sample in set until end of X
     
     '''
-    #10,000 x 5
+    nnGraph= np.zeros((X.shape[0],k))
     
+    #4
+    for i in range(len(X)):
+        
+        #1
+        x = X[i]
+        
+        allDistances = np.zeros(len(X))
+        
+        for j in range(len(X)):
+            
+            if i != j:
+                
+                #2
+                dist = math.sqrt(pow(np.sum(abs(x - X[j])),2))
+                allDistances[j] = dist
     
+        #3
+        nnGraph[i] = np.argsort(allDistances)[:5]
     
-    
-    
-    
-    return 0
+    return nnGraph
 
 def split_train_test(X,y,percent_train=0.9):
     ind = np.random.permutation(X.shape[0])
@@ -157,7 +160,7 @@ if __name__ == "__main__":
     y = np.load('mnist_y.npy')
     
     n = X.shape[0] # Use all examples
-    n = 10000      # Use a few examples
+    n = 10000    # Use a few examples
     
     ind = np.random.permutation(len(y))
     X=X[ind[:n]]
@@ -168,17 +171,24 @@ if __name__ == "__main__":
     #print(">>> ytrain length - ", len(y_train)) #Is 9000 if n = 10,000
     #print(">>> X_test length - ", len(X_test)) #Is 1,000 if n = 10,000
     
+    print("Total data samples being used: ", n)
+    
     #----------Root----------------------
-    root = rootX(X)
-    print('REACHED END OF FINDING ROOT')
+    root,sampleNum = rootX(X)
+    print('Root is sample', sampleNum)
     #------------------------------------
     
-    '''
-    
-    #Model 1 and Model 2 are both manhattan dist
+    #----------NN Graph----------------------
+    print("Calculating NN graph for every sample in data set")
+    nngraph = nn_graph(X,5)
+    print('NN Graph Calculated')
+    #------------------------------------
+
+    #Model 1 and Model 2 are both euc and man dist respectively
     
     #---------- MODEL 1 ---------------
-    model = knn()
+    model = knn(distance='Euclidean')
+    print("> Calculating ", model.distance , " distance")
     start = time.time()
     model.fit(X_train, y_train)
     elapsed_time = time.time()-start
@@ -192,7 +202,8 @@ if __name__ == "__main__":
     print('Accuracy:',np.sum(pred==y_test)/len(y_test))
     
     #---------- MODEL 2 --------------
-    model = knn(weighted=False)
+    model = knn(weighted=False, distance='Manhattan')
+    print("> Calculating ", model.distance , " distance")
     start = time.time()
     model.fit(X_train, y_train)
     elapsed_time = time.time()-start
@@ -203,22 +214,5 @@ if __name__ == "__main__":
     pred = model.predict(X_test)
     elapsed_time = time.time()-start
     print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
-    print('Accuracy:',np.sum(pred==y_test)/len(y_test))
-    
-    '''
-    
-    
-'''
->>> AFTER FINISHING ONLY MANHATTAN DISTANCE
-    
-MNIST dataset
-Elapsed_time training  0.000000 
-Elapsed_time testing  131.526172 
-Accuracy: 0.934
-Elapsed_time training  0.000000 
-Elapsed_time testing  150.901918 
-Accuracy: 0.931
-
-'''
-    
+    print('Accuracy:',np.sum(pred==y_test)/len(y_test))   
     
