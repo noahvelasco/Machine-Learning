@@ -113,15 +113,13 @@ def rootX(X):
 Write the function nn_graph(X,k) that returns the k-nearest neighbor graph of dataset X. 
 The function should return a X.shape[0] by k array of ints, where the elements in row i are 
 the indices of the nearest neighbors of example i in the dataset.
-'''
-def nn_graph(X,k): 
 
-    '''
     1. Let x be the test sample
-    2. Find euc dist between test sample  x and all train samples 
+    2. Find euc dist between test sample x and all train samples 
     3. Get k closest distances of x from X
     4. Repeat process but let x be the next sample in set until end of X
-    '''
+'''
+def nn_graph(X,k): 
     nnGraphNoah = np.zeros((X.shape[0],k))
     
     #4
