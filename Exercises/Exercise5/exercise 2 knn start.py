@@ -1,8 +1,16 @@
 import numpy as np
 import time
 import math
-import sys
-import random
+
+'''
+Goals:
+    1. complete the nearest_neighbors(X,x,k) function which finds the closest samples of
+        sample x from the sample set X
+    2. complete the graph_nearest_neighbors(x,X, G,k,r=20,t=20) function which
+        utilizes the nearest neighbor graph to find the k nearest neighbors of x from
+        all the sample set X
+'''
+
 
 class knn(object):
     def __init__(self,k=3,weighted=True,classify=True, distance = 'Euclidean'):  
@@ -75,7 +83,7 @@ def split_train_test(X,y,percent_train=0.9):
 
 '''
 My implementation of nearest_neighbors(X,x,k) returns 
-the indices of the k-nearest neighbors of example x in dataset X.
+the indices of the k-nearest neighbors indices of example x from the dataset X.
 
     1. Let x be the test sample
     2. Find euc dist between test sample  x and all train samples 
@@ -90,7 +98,7 @@ def nearest_neighbors(X,x,k):
     allDistances = np.zeros(len(X))
     #Step 2
     for i in range(len(X)):
-        
+            
         dist = math.sqrt(np.sum(pow(abs(x - X[i]),2)))
         allDistances[i] = dist
 
@@ -120,7 +128,8 @@ Algorithm:
     5. Let G[RandomVertex[nn]] be the new RandomVertex
     6. Repeat steps 3-5 't' times
     7. Repeat steps 2-6 'r' times
-    8. Calculate k closest samples from N and return their indices
+    8. Calculate k closest sample indices from N
+    9. Get the indices from step 8 and get their VALUES from N and return them as a list
     
 Purpose of this function - Significantly speed up nn search when dealing
                             with large datasets when nnGraph was preprocessed
@@ -139,37 +148,38 @@ Purpose of this function - Significantly speed up nn search when dealing
             
     
 '''
-def graph_nearest_neighbors(x,X,G,k,r=20,t=20):
-    
+def graph_nearest_neighbors(x,X, G,k,r=20,t=20):
     
     #Step 1
     N = []
     
+    #Step 2: To avoid choosing the same random vertex, make an array containing r indices that are not repeated
+    ind = np.random.permutation(G.shape[0])[:r] #[:r] because we are just get a random vertex r times
+    
     for i in range(r):
         
         #Step 2
-        randVertex = G[np.random.randint(0,G.shape[0])]#A random vertex containing a list of its k nearest neighbors 
+        randVertex = G[ind[i]]#A random vertex containing a list of its k nearest neighbors 
         
         for j in range(t):
-            
-            #print("RV", randVertex)
-            
             #Step 3 - find nn of x from the randVertex's nn's
-            nn = nearest_neighbors(X[randVertex] , x ,3)[2] #nn yields a 1 valued list so nn[0] only yields value out of list
+            nn = nearest_neighbors(X[randVertex] , x ,1)[0] #nn yields a 1 valued list so nn[0] only yields value out of list
             
             #Step 4
             N.append(randVertex[nn])
             
             #Step 5
             randVertex = G[randVertex[nn]]
-            #print("RV", randVertex)
             #Step 6 - repeat inner for loop t times
             
         #Step 7 - repeat outer for loop r times
-        
-    #Step 8
-    nn = nearest_neighbors(X[N] , x ,k)
-    return nn
+    
+    #Step 8 - Get the indices from N that are closest to x
+    nn = nearest_neighbors(X[N],x ,k)
+    
+    #Step 9 - return the VALUES (not indices) from N whose indices were found at Step 8 that are nearest neighbors to x
+    N = np.array(N)
+    return N[nn] #yields a list of indices from X that range from 0-8999
     
 
 if __name__ == "__main__":  
@@ -226,6 +236,7 @@ if __name__ == "__main__":
     
     #Get 10 random sample indices from X_train
     sample = np.random.randint(X_train.shape[0], size=10)
+    
     #Get the 10 nearest neighbors of each example where each example is specified by values from 'sample' 
     for n in sample:
         
@@ -246,15 +257,13 @@ if __name__ == "__main__":
     for i in sample:
         nn = nearest_neighbors(X_train,X_test[i],k)
         
-        #Modified to give sample values(0-9) instead of just indices       
-        
         #print('Nearest neighbors of test example',i)#Fuentes
-        #print('Nearest neighbors of test example', y_test[i])#Modified
-        print('Example',i, 'class',y_test[i])#Modified from nng for loop
+        print('Example',i, 'class',y_test[i])##Modified to give sample values(0-9) instead of just indices
         for a in nn:
             #print(a,end=' ')#Fuentes
-            print(y_train[a],end=' ')#Modified
+            print(y_train[a],end=' ')#Modified to give sample values(0-9) instead of just indices  
         print()
+    
     print("*****************************************")
     
     #-------------------graph_nearest_neighbors()------------------------------
@@ -265,11 +274,13 @@ if __name__ == "__main__":
     print('Nearest neighbors using graph approximation')   
     
     for i in sample:
-        nn = graph_nearest_neighbors(X_test[i],X_train,nng,k)
-        #print('Nearest neighbors of test example',i) #Fuentes
-        print('Example',i, 'class',y_test[i])#Modified from nng for loop   
-        for a in nn:
-            print(y_train[a],end=' ')
         
+        nn = graph_nearest_neighbors(X_test[i],X_train ,nng,k)
+        #print('Nearest neighbors of test example',i) #Fuentes
+        print('Example',i, 'class',y_test[i])##Modified to give sample values(0-9) instead of just indices  
+        
+        for a in nn:
+            print(y_train[a],end=' ')##Modified to give sample values(0-9) instead of just indices  
         print()
+        
     print("*******************************************")
