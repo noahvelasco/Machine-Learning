@@ -1,6 +1,7 @@
 import numpy as np
 import time
 import math
+import sys
 
 class knn(object):
     def __init__(self,k=3,weighted=True,classify=True, distance = 'Euclidean'):  
@@ -82,11 +83,11 @@ the indices of the k-nearest neighbors of example x in dataset X.
 '''
 def nearest_neighbors(X,x,k):
     
+    
     #Step 1 is already done since it is passed as parameter 
      
     #will contain len(X) euclidean distances - will get first 5 after sorting all of them later
     allDistances = np.zeros(len(X))
-    
     #Step 2
     for i in range(len(X)):
         
@@ -96,11 +97,77 @@ def nearest_neighbors(X,x,k):
     #Step 3 - take out the first sample because it is 0 which is the sample comparing it to itself when sorted and get following k values
     nn = np.argsort(allDistances)[1:k+1]
     
-    #My nn graph is done ; Is an np array with the k smallest euclidean distances (k closest neighbors) to x
+    #My nn graph is done ; nn is an np array with the indices of the k smallest euclidean distances (k closest neighbors) to x
     return nn
     
-def graph_nearest_neighbors(x,G,k,r=20,t=20):
-    # Returns the indices of the k-nearest neighbors of x
+    
+'''
+graph_nearest_neighbors(x,G,k,r,t) implements the 
+nearest-neighbor graph search described in the slides.
+
+Steps:
+    > Start a random vertex in graph G (nn graph)
+    > Search Graph starting with the random vertex, keeping track of the nearest neighbor found until no vertex
+        with smaller distance can be found; Kind of like Depth-First-Search (DFS)
+   
+    Basically: Start at a random point and perform DFS on its nn until you reach the end of
+                the iterations and get the k nearest neighbors out of the samples you went through     
+
+Algorithm:
+    1. Create N - an np array that will store indices of closest samples to x
+    2. Choose a random vertex index in G and let it be 'randomVertex' (Y_0 from algorithm)
+    3. Get the nearest neighbor of x from RandomVertex's nearest neighbors
+    4. Add RandomVertex[nn] to N
+    5. Let G[RandomVertex[nn]] be the new RandomVertex
+    6. Repeat steps 3-5 't' times
+    7. Repeat steps 2-6 'r' times
+    8. Calculate k closest samples from N and return their indices
+    
+Purpose of this function - Significantly speed up nn search when dealing
+                            with large datasets when nnGraph was preprocessed
+
+    x = test sample(a.k.a example)
+    G = nearest neighbor graph of each sample in the train set (n*k array)
+    k = number of closest neighbors you want
+    r= fixed point to avoid infinite loops - Fuentes mentions in recording
+    t= fixed point to avoid infinite loops - Fuentes mentions in recording
+
+    * Lecture recording 09_08_ML on minutes 32:44-40:15 Fuentes explains
+    
+    > NOTE: I added 'X' as a parameter because we simply cannot do without it. We need it to 
+            make the necessary computations. Without 'X' we would not be able to access the data using the
+            sample indices from G and would render the funtion useless. TLDR - we NEED X for comparisons
+            
+    
+'''
+def graph_nearest_neighbors(x,X,G,k,r=20,t=20):
+    
+    """
+    #Step 1
+    N = []
+    
+    for i in range(r):
+        
+        #Step 2
+        randVertex = G[np.random.randint(G.shape[0])]#A random vertex containing a list of its k nearest neighbors 
+
+        for j in range(t):
+            
+            #Step 3 - find nn of x from the randVertex's nn's
+            nn = nearest_neighbors(X[randVertex] , x ,1) #X[randVertex] yield a list of nearest neighbors indices from X
+            
+            #Step 4
+            np.append(N,randVertex[nn])
+            
+            #Step 5
+            randVertex = G[randVertex[nn]]
+    
+             #Step 6 - repeat inner for loop t times
+        #Step 7 - repeat outer for loop r times
+    #Step 8
+    nn = nearest_neighbors(X[N] , x ,k)
+    """
+    #Returns the indices of the k-nearest neighbors of x
     return np.zeros(k,dtype=int)
 
 if __name__ == "__main__":  
@@ -148,48 +215,59 @@ if __name__ == "__main__":
     r, att = root_kd(X_train)
     print('kd-tree root example: {}, attribute: {}, threshold: {}'.format(x,att,X_train[r,att]))
     ''' 
-
     
+    #-----------------------------nng------------------------------------------
+    print("Calculating nng...")
+    #For every sample in X_train get 10 nearest neighbors 
     nng =  nn_graph(X_train,10)
+    print(">nng done calculating")
     
+    #Get 10 random sample indices from X_train
     sample = np.random.randint(X_train.shape[0], size=10)
-    
+    #Get the 10 nearest neighbors of each example where each example is specified by values from 'sample' 
     for n in sample:
+        
         print('Example',n, 'class',y_train[n])
         print('Neighbors class')
         for a in y_train[nng[n]]:
             print(a,end=' ')
         print()
-        
-    #gets 10 random samples(examples) from the n sized test set 
+    
+    #-----------------------nearest_neighbors()--------------------------------
+    #Get 10 random sample indices from X_test
     sample = np.random.randint(X_test.shape[0], size=10)
-    k=5
+    k=10
     
     print("************TASK 1 FROM PDF************")
     print('Nearest neighbors using exhaustive search')
     for i in sample:
         nn = nearest_neighbors(X_train,X_test[i],k)
         
-        #Modified to give sample values(0-9) instead of indices       
+        #Modified to give sample values(0-9) instead of just indices       
         
         #print('Nearest neighbors of test example',i)#Fuentes
-        print('Nearest neighbors of test example', y_test[i])#Modified
+        #print('Nearest neighbors of test example', y_test[i])#Modified
+        print('Example',i, 'class',y_test[i])#Modified from nng for loop
         for a in nn:
-            #print(a,end=' ')#Fuents
+            #print(a,end=' ')#Fuentes
             print(y_train[a],end=' ')#Modified
         print()
     print('**********************************')
     
-    '''
+    #-------------------graph_nearest_neighbors()------------------------------
+    print("************TASK 2 FROM PDF************")
     print('Nearest neighbors using graph approximation')    
     for i in sample:
-        nn = graph_nearest_neighbors(X_test[i],nng,k) 
-        print('Nearest neighbors of test example',i)
+        nn = graph_nearest_neighbors(X_test[i],X_train,nng,k)
+        #print('Nearest neighbors of test example',i) #Fuentes
+        
+        print("MADE IT THIS FAR", i)
+        
+        print('Example',i, 'class',y_test[i])#Modified from nng for loop   
         for a in nn:
             print(a,end=' ')
         print()
-    ''' 
-    
+    print('**********************************')
     
     
     
