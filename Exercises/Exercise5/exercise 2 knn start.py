@@ -11,7 +11,6 @@ Goals:
         all the sample set X
 '''
 
-
 class knn(object):
     def __init__(self,k=3,weighted=True,classify=True, distance = 'Euclidean'):  
         self.k = k
@@ -145,8 +144,6 @@ Purpose of this function - Significantly speed up nn search when dealing
     > NOTE: I added 'X' as a parameter because we simply cannot do without it. We need it to 
             make the necessary computations. Without 'X' we would not be able to access the data using the
             sample indices from G and would render the funtion useless. TLDR - we NEED X for comparisons
-            
-    
 '''
 def graph_nearest_neighbors(x,X, G,k,r=20,t=20):
     
@@ -245,7 +242,6 @@ if __name__ == "__main__":
         for a in y_train[nng[n]]:
             print(a,end=' ')
         print()
-    
     
     #-----------------------nearest_neighbors()--------------------------------
     #Get 10 random sample indices from X_test
