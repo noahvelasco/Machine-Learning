@@ -254,6 +254,7 @@ if __name__ == "__main__":
     
     print("*****************************************")
     print('Nearest neighbors using exhaustive search')
+    start = time.time()
     for i in sample:
         nn = nearest_neighbors(X_train,X_test[i],k)
         
@@ -263,7 +264,8 @@ if __name__ == "__main__":
             #print(a,end=' ')#Fuentes
             print(y_train[a],end=' ')#Modified to give sample values(0-9) instead of just indices  
         print()
-    
+    elapsed_time = time.time()-start
+    print('Elapsed_time exhaustive search  {0:.6f} '.format(elapsed_time))   
     print("*****************************************")
     
     #-------------------graph_nearest_neighbors()------------------------------
@@ -272,7 +274,7 @@ if __name__ == "__main__":
     k=10
     print("*******************************************")
     print('Nearest neighbors using graph approximation')   
-    
+    start = time.time()
     for i in sample:
         
         nn = graph_nearest_neighbors(X_test[i],X_train ,nng,k)
@@ -282,5 +284,6 @@ if __name__ == "__main__":
         for a in nn:
             print(y_train[a],end=' ')##Modified to give sample values(0-9) instead of just indices  
         print()
-        
+    elapsed_time = time.time()-start
+    print('Elapsed_time graph approximation {0:.6f} '.format(elapsed_time))
     print("*******************************************")
