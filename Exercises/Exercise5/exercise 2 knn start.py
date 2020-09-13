@@ -2,6 +2,7 @@ import numpy as np
 import time
 import math
 import sys
+import random
 
 class knn(object):
     def __init__(self,k=3,weighted=True,classify=True, distance = 'Euclidean'):  
@@ -83,7 +84,6 @@ the indices of the k-nearest neighbors of example x in dataset X.
 '''
 def nearest_neighbors(X,x,k):
     
-    
     #Step 1 is already done since it is passed as parameter 
      
     #will contain len(X) euclidean distances - will get first 5 after sorting all of them later
@@ -99,8 +99,7 @@ def nearest_neighbors(X,x,k):
     
     #My nn graph is done ; nn is an np array with the indices of the k smallest euclidean distances (k closest neighbors) to x
     return nn
-    
-    
+      
 '''
 graph_nearest_neighbors(x,G,k,r,t) implements the 
 nearest-neighbor graph search described in the slides.
@@ -142,33 +141,36 @@ Purpose of this function - Significantly speed up nn search when dealing
 '''
 def graph_nearest_neighbors(x,X,G,k,r=20,t=20):
     
-    """
+    
     #Step 1
     N = []
     
     for i in range(r):
         
         #Step 2
-        randVertex = G[np.random.randint(G.shape[0])]#A random vertex containing a list of its k nearest neighbors 
-
+        randVertex = G[np.random.randint(0,G.shape[0])]#A random vertex containing a list of its k nearest neighbors 
+        
         for j in range(t):
             
+            #print("RV", randVertex)
+            
             #Step 3 - find nn of x from the randVertex's nn's
-            nn = nearest_neighbors(X[randVertex] , x ,1) #X[randVertex] yield a list of nearest neighbors indices from X
+            nn = nearest_neighbors(X[randVertex] , x ,3)[2] #nn yields a 1 valued list so nn[0] only yields value out of list
             
             #Step 4
-            np.append(N,randVertex[nn])
+            N.append(randVertex[nn])
             
             #Step 5
             randVertex = G[randVertex[nn]]
-    
-             #Step 6 - repeat inner for loop t times
+            #print("RV", randVertex)
+            #Step 6 - repeat inner for loop t times
+            
         #Step 7 - repeat outer for loop r times
+        
     #Step 8
     nn = nearest_neighbors(X[N] , x ,k)
-    """
-    #Returns the indices of the k-nearest neighbors of x
-    return np.zeros(k,dtype=int)
+    return nn
+    
 
 if __name__ == "__main__":  
     
@@ -233,12 +235,13 @@ if __name__ == "__main__":
             print(a,end=' ')
         print()
     
+    
     #-----------------------nearest_neighbors()--------------------------------
     #Get 10 random sample indices from X_test
     sample = np.random.randint(X_test.shape[0], size=10)
     k=10
     
-    print("************TASK 1 FROM PDF************")
+    print("*****************************************")
     print('Nearest neighbors using exhaustive search')
     for i in sample:
         nn = nearest_neighbors(X_train,X_test[i],k)
@@ -252,22 +255,21 @@ if __name__ == "__main__":
             #print(a,end=' ')#Fuentes
             print(y_train[a],end=' ')#Modified
         print()
-    print('**********************************')
+    print("*****************************************")
     
     #-------------------graph_nearest_neighbors()------------------------------
-    print("************TASK 2 FROM PDF************")
-    print('Nearest neighbors using graph approximation')    
+    #Get 10 random sample indices from X_test
+    sample = np.random.randint(X_test.shape[0], size=10)
+    k=10
+    print("*******************************************")
+    print('Nearest neighbors using graph approximation')   
+    
     for i in sample:
         nn = graph_nearest_neighbors(X_test[i],X_train,nng,k)
         #print('Nearest neighbors of test example',i) #Fuentes
-        
-        print("MADE IT THIS FAR", i)
-        
         print('Example',i, 'class',y_test[i])#Modified from nng for loop   
         for a in nn:
-            print(a,end=' ')
+            print(y_train[a],end=' ')
+        
         print()
-    print('**********************************')
-    
-    
-    
+    print("*******************************************")
