@@ -2,7 +2,14 @@ import numpy as np
 import time
 import math
 
-'''
+''' 
+Group 1: 
+    
+    *R Noah Padilla
+    Aaron M Alarcon
+    Bibek Aryal
+    Leonardo Orea Amador
+
 Goals:
     1. complete the nearest_neighbors(X,x,k) function which finds the closest samples of
         sample x from the sample set X
@@ -273,7 +280,7 @@ if __name__ == "__main__":
     start = time.time()
     for i in sample:
         
-        nn = graph_nearest_neighbors(X_test[i],X_train ,nng,k)
+        nn = graph_nearest_neighbors(X_test[i],X_train,nng,k)
         #print('Nearest neighbors of test example',i) #Fuentes
         print('Example',i, 'class',y_test[i])##Modified to give sample values(0-9) instead of just indices  
         
