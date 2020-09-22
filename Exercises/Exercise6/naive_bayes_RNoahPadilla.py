@@ -33,7 +33,7 @@ class naive_bayes():
     predict() - predicts the classification of  each test point from x_test 
                 using the naive bayes theorems and stores it into 'pred'
                 
-                BEST TO UNDERSTAND IF ITS DRAWN OUT - look at MindMap.pdf for an example thats smail and similar 
+                BEST TO UNDERSTAND IF ITS DRAWN OUT - look at MindMap.pdf for an example thats smaller and similar 
                 
                 --------------Givens--------------
                 self.p_class contains probabilities of each class
@@ -41,7 +41,7 @@ class naive_bayes():
                 x_test = 7,000 samples that are 784 length and either contain 1's(pixel>127.5) or 0's (pixel<127.5)
                 
                 --------------What we need--------------
-                pred[]- which will contain calssifications(0-9 values) of all the test points
+                pred[]- which will contain classifications(0-9 values) of all the test points
                 
                 
                 Algorithm using Naive Bayes:
@@ -91,7 +91,7 @@ class naive_bayes():
             
         #return list of CLASSIFICATIONS of every test point from x_test in respective order
         return pred
-
+    
 def display_probabilities(P):
     fig, ax = plt.subplots(1,10,figsize=(10,1))
     for i in range(10):
