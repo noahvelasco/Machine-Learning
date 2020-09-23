@@ -28,7 +28,7 @@ print(">>>\n",p)
 print(np.argmax(p))
 
 p = p/np.sum(p)
-
+print("************\n",p)
 print(np.sum(p))
 
 p = np.copy(p_att_given_class)
