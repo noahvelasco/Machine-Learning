@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 import time 
@@ -12,10 +13,17 @@ class naive_bayes():
         self.n_classes = np.amax(y)+1
         self.p_class = np.zeros(self.n_classes)
         self.p_att_given_class = np.zeros((self.n_classes,X.shape[1]))
+        self.means = np.zeros((self.n_classes,X.shape[1]))#10 classes and calculate mean for each attribute
+        self.stds = np.zeros((self.n_classes,X.shape[1]))#10 classes and calculate std for each attribute
+        
         for i in range(self.n_classes):
             self.p_class[i] = np.sum(y==i)/len(y)
             self.p_att_given_class[i] = np.mean(X[y==i],axis=0)
-            
+            self.means[i] = np.mean(X[y==i],axis=0)
+            self.stds[i] = np.std(X[y==i],axis=0)
+    
+    '''
+    #For num 1 on exercise
     def predict(self,x_test):
         pred =  np.zeros(x_test.shape[0],dtype=int)
         probs = np.zeros((x_test.shape[0],self.n_classes))
@@ -26,7 +34,51 @@ class naive_bayes():
         probs = probs/np.sum(probs)
         pred = np.argmax(probs,axis=1)
         return pred,probs
-   
+    '''
+    '''
+    #^^^^^^^^^^^^
+    Elapsed_time training:  0.179914 secs
+    Elapsed_time testing: 0.605708 secs
+    Accuracy: 0.840714 
+    '''
+    
+    '''
+    #For num 2 on exercise
+    def predict(self,x_test):
+        pred =  np.zeros(x_test.shape[0],dtype=int) 
+        probs = np.zeros((x_test.shape[0],self.n_classes))
+        for i,x in enumerate(x_test):
+            p = self.p_att_given_class*x + (1-self.p_att_given_class)*(1-x)
+            m = np.prod(p,axis=1)
+            probs[i] = m * self.p_class
+        probs += 1e-200 #smoothing
+        probs = probs/np.sum(probs)
+        pred = np.argmax(np.log(probs),axis=1)#<<<<<<<<<Include the log and its the same as top predict
+        return pred,probs
+    '''
+    '''
+    Elapsed_time training:  0.179915 secs
+    Elapsed_time testing: 0.572727 secs
+    Accuracy: 0.834429
+    '''
+    
+    #For num 3 on exercise - real-valued attributes
+    def predict(self,x_test):
+        pred =  np.zeros(x_test.shape[0],dtype=int) #(7000)
+        
+        for x in range(x_test.shape[0]):
+            
+            for c in range(self.n_classes):
+                likelihoods = np.zeros(self.n_classes)
+                term1 = np.prod(np.array(1/(math.sqrt(2*math.pi) * self.stds[c])))
+                term2 = np.prod(np.array(np.exp( -np.power((x-self.means[c]),2) / np.power((self.stds[c]), 2) )))
+                
+                likelihoods[c] = term1 * term2
+            
+            pred[x] = np.argmax(likelihoods)
+            
+        return pred
+
 def display_probabilities(P):
     fig, ax = plt.subplots(1,10,figsize=(10,1))
     for i in range(10):
@@ -60,12 +112,13 @@ if __name__ == "__main__":
     print('Elapsed_time training:  {0:.6f} secs'.format(elapsed_time))  
     
     plt.close('all')
-    display_probabilities(model.p_att_given_class)
+    #display_probabilities(model.p_att_given_class)
     
-    start = time.time()       
-    pred,probs = model.predict(X_test)
-    print(">>> prs",probs.shape)
-    print(">>> pds",pred.shape)
+    start = time.time()
+    #--------For predict 1 & 2       
+    #pred,probs = model.predict(X_test)
+    #--------For predict 3: real valued attributes
+    pred,t = model.predict(X_test)
     elapsed_time = time.time()-start
     print('Elapsed_time testing: {0:.6f} secs'.format(elapsed_time))   
     print('Accuracy: {0:.6f} '.format(accuracy(pred,y_test)))
