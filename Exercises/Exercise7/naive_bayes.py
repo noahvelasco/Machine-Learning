@@ -20,8 +20,8 @@ class naive_bayes():
         for i in range(self.n_classes):
             self.p_class[i] = np.sum(y==i)/len(y)
             self.p_att_given_class[i] = np.mean(X[y==i],axis=0)
-            self.means[i] = np.mean(X[y==i],axis=0)
-            self.stds[i] = np.std(X[y==i],axis=0)
+            self.means[i] = np.mean(X[y==i],axis=0) + 1e-200 #smoothing
+            self.stds[i] = np.std(X[y==i],axis=0) + 1e-200 #smoothing
     
     
     #For num 1 on exercise
@@ -69,7 +69,6 @@ class naive_bayes():
         #x_test is using 0-255 values for each attribute
         
         pred =  np.zeros(x_test.shape[0],dtype=int) #(7000,784)
-        
         #Go through every test point
         for i,x in enumerate(x_test):
             
@@ -77,21 +76,41 @@ class naive_bayes():
             #For every test point generate 10 probs using formula and get max
             for j in range(self.n_classes):
                 
-                term1 = (1/(math.sqrt(2* math.pi) * self.stds[j] + 1e-200))
-                term2 = np.exp( (x-self.means[j]**2 ) / ( self.stds[j]**2 + 1e-200 ) )
-                fw = np.prod(term1 * term2) * self.p_class[j] 
-                
-                allprobs[j] = fw
+                term1 = 1/(math.sqrt(2 * math.pi) * self.stds[j] )
+                term2 = np.exp( -1 * (((x-self.means[j])**2 ) / ( self.stds[j]**2 )) )
+                fw = np.multiply(term1 , term2)
+                '''
+                print("x.shape",x.shape)
+                print("--------------T2")
+                print(term1)
+                print("--------------T2")
+                print(term2)
+                print("--------------fw")
+            
+                sys.exit(0)
+                '''
+                allprobs[j] = np.prod(fw) * self.p_class[j]
             #print(allprobs)
                
             #create probs and get argmax and add to pred[i]
-            #print("allprobs shape", allprobs.shape)
-            #allprobs += 1e-200 #smoothing
-            #allprobs = allprobs/np.sum(allprobs)
-            pred[i] = np.argmax(allprobs)
-            #print(i)            
-    
+            allprobs += 1e-200 #smoothing
+            allprobs = allprobs/np.sum(allprobs)
+            pred[i] = np.argmax(allprobs)         
+            
         return pred
+    
+    '''
+    <<< Part 3 of exercise >>>
+    Elapsed_time training:  0.624700 secs
+C:/Users/npizz/Desktop/Machine-Learning/Exercises/Exercise7/naive_bayes.py:79: RuntimeWarning: divide by zero encountered in true_divide
+  term1 = 1/(math.sqrt(2 * math.pi) * self.stds[j] )
+C:/Users/npizz/Desktop/Machine-Learning/Exercises/Exercise7/naive_bayes.py:80: RuntimeWarning: overflow encountered in square
+  term2 = np.exp( -1 * (((x-self.means[j])**2 ) / ( self.stds[j]**2 )) )
+C:/Users/npizz/Desktop/Machine-Learning/Exercises/Exercise7/naive_bayes.py:81: RuntimeWarning: invalid value encountered in multiply
+  fw = np.multiply(term1 , term2)
+Elapsed_time testing: 3.925118 secs
+Accuracy: 0.097143 
+    '''
 
 def display_probabilities(P):
     fig, ax = plt.subplots(1,10,figsize=(10,1))
@@ -113,7 +132,6 @@ if __name__ == "__main__":
    
     X = np.load('mnist_X.npy').astype(np.float32).reshape(-1,28*28)
     y = np.load('mnist_y.npy')  
-    
     
     #------------------------#1 on exercise------------------------------------
     thr = 127.5
