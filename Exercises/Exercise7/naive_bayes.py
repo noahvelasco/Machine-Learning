@@ -2,6 +2,7 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import time 
+import sys
 
 class naive_bayes():
     def __init__(self):  
@@ -9,7 +10,7 @@ class naive_bayes():
         self.p_att_given_class = None
         
     def fit(self,X,y): 
-        # Assumes X is binary
+        # Assumes X is binary for predict1 and predict2
         self.n_classes = np.amax(y)+1
         self.p_class = np.zeros(self.n_classes)
         self.p_att_given_class = np.zeros((self.n_classes,X.shape[1]))
@@ -22,19 +23,19 @@ class naive_bayes():
             self.means[i] = np.mean(X[y==i],axis=0)
             self.stds[i] = np.std(X[y==i],axis=0)
     
-    '''
+    
     #For num 1 on exercise
-    def predict(self,x_test):
+    def predict1(self,x_test):
         pred =  np.zeros(x_test.shape[0],dtype=int)
         probs = np.zeros((x_test.shape[0],self.n_classes))
         for i,x in enumerate(x_test):
             p = self.p_att_given_class*x + (1-self.p_att_given_class)*(1-x)
             m = np.prod(p,axis=1)
             probs[i] = m*self.p_class
-        probs = probs/np.sum(probs)
+        probs = probs/np.sum(probs,axis=1).reshape(-1,1)
         pred = np.argmax(probs,axis=1)
         return pred,probs
-    '''
+    
     '''
     #^^^^^^^^^^^^
     Elapsed_time training:  0.179914 secs
@@ -42,9 +43,9 @@ class naive_bayes():
     Accuracy: 0.840714 
     '''
     
-    '''
+    
     #For num 2 on exercise
-    def predict(self,x_test):
+    def predict2(self,x_test):
         pred =  np.zeros(x_test.shape[0],dtype=int) 
         probs = np.zeros((x_test.shape[0],self.n_classes))
         for i,x in enumerate(x_test):
@@ -52,31 +53,44 @@ class naive_bayes():
             m = np.prod(p,axis=1)
             probs[i] = m * self.p_class
         probs += 1e-200 #smoothing
-        probs = probs/np.sum(probs)
+        probs = probs/np.sum(probs,axis=1).reshape(-1,1)
         pred = np.argmax(np.log(probs),axis=1)#<<<<<<<<<Include the log and its the same as top predict
         return pred,probs
-    '''
+    
     '''
     Elapsed_time training:  0.179915 secs
     Elapsed_time testing: 0.572727 secs
     Accuracy: 0.834429
     '''
-    
+
     #For num 3 on exercise - real-valued attributes
-    def predict(self,x_test):
-        pred =  np.zeros(x_test.shape[0],dtype=int) #(7000)
+    def predict3(self,x_test):
         
-        for x in range(x_test.shape[0]):
+        #x_test is using 0-255 values for each attribute
+        
+        pred =  np.zeros(x_test.shape[0],dtype=int) #(7000,784)
+        
+        #Go through every test point
+        for i,x in enumerate(x_test):
             
-            for c in range(self.n_classes):
-                likelihoods = np.zeros(self.n_classes)
-                term1 = np.prod(np.array(1/(math.sqrt(2*math.pi) * self.stds[c])))
-                term2 = np.prod(np.array(np.exp( -np.power((x-self.means[c]),2) / np.power((self.stds[c]), 2) )))
+            allprobs = np.zeros(self.n_classes)
+            #For every test point generate 10 probs using formula and get max
+            for j in range(self.n_classes):
                 
-                likelihoods[c] = term1 * term2
-            
-            pred[x] = np.argmax(likelihoods)
-            
+                term1 = (1/(math.sqrt(2* math.pi) * self.stds[j] + 1e-200))
+                term2 = np.exp( (x-self.means[j]**2 ) / ( self.stds[j]**2 + 1e-200 ) )
+                fw = np.prod(term1 * term2) * self.p_class[j] 
+                
+                allprobs[j] = fw
+            #print(allprobs)
+               
+            #create probs and get argmax and add to pred[i]
+            #print("allprobs shape", allprobs.shape)
+            #allprobs += 1e-200 #smoothing
+            #allprobs = allprobs/np.sum(allprobs)
+            pred[i] = np.argmax(allprobs)
+            #print(i)            
+    
         return pred
 
 def display_probabilities(P):
@@ -98,30 +112,78 @@ if __name__ == "__main__":
     plt.close('all')
    
     X = np.load('mnist_X.npy').astype(np.float32).reshape(-1,28*28)
-    y = np.load('mnist_y.npy')
+    y = np.load('mnist_y.npy')  
     
+    
+    #------------------------#1 on exercise------------------------------------
     thr = 127.5
     X = (X>thr).astype(int)
-     
     X_train, X_test, y_train, y_test = split_train_test(X,y)
     
-    model = naive_bayes()
+    print("<<< Part 1 of exercise >>>")
+    model1 = naive_bayes()
     start = time.time()
-    model.fit(X_train, y_train)
+    model1.fit(X_train, y_train)
     elapsed_time = time.time()-start
     print('Elapsed_time training:  {0:.6f} secs'.format(elapsed_time))  
-    
     plt.close('all')
-    #display_probabilities(model.p_att_given_class)
     
     start = time.time()
-    #--------For predict 1 & 2       
-    #pred,probs = model.predict(X_test)
-    #--------For predict 3: real valued attributes
-    pred,t = model.predict(X_test)
+    pred1,probs1 = model1.predict1(X_test)
     elapsed_time = time.time()-start
     print('Elapsed_time testing: {0:.6f} secs'.format(elapsed_time))   
-    print('Accuracy: {0:.6f} '.format(accuracy(pred,y_test)))
+    print('Accuracy: {0:.6f} '.format(accuracy(pred1,y_test)))
+    #-----------------------#2 on exercise-------------------------------------
+    print("<<< Part 2 of exercise >>>")
+    model2 = naive_bayes()
+    start = time.time()
+    model2.fit(X_train, y_train)
+    elapsed_time = time.time()-start
+    print('Elapsed_time training:  {0:.6f} secs'.format(elapsed_time))  
+
+    plt.close('all')
+
+    start = time.time()
+    pred2, probs2 = model2.predict2(X_test)
+    elapsed_time = time.time()-start
+    print('Elapsed_time testing: {0:.6f} secs'.format(elapsed_time))   
+    print('Accuracy: {0:.6f} '.format(accuracy(pred2,y_test)))   
+    
+    #-----------------------#3 on exercise-------------------------------------
+    
+    #used for predict3
+    X = np.load('mnist_X.npy').astype(np.float32).reshape(-1,28*28) #use 0-255 values for this one
+    X_train, X_test, y_train, y_test = split_train_test(X,y)
+    
+    print("<<< Part 3 of exercise >>>")
+    model3 = naive_bayes()
+    start = time.time()
+    model3.fit(X_train, y_train)
+    elapsed_time = time.time()-start
+    print('Elapsed_time training:  {0:.6f} secs'.format(elapsed_time))  
+
+    plt.close('all')
+    start = time.time()
+    pred3 = model3.predict3(X_test)
+    elapsed_time = time.time()-start
+    print('Elapsed_time testing: {0:.6f} secs'.format(elapsed_time))   
+    print('Accuracy: {0:.6f} '.format(accuracy(pred3,y_test)))
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
