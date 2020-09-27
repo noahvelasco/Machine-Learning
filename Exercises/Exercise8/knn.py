@@ -30,7 +30,7 @@ class knn(object):
         self.X_train = x
         self.y_train = y
     
-    def predict(self,x_test):
+    def predict(self,X_test):
         if self.distance=='Euclidean':
             dist  = self.euclidean_distance(X_test)     
             dist = dist**2
@@ -39,7 +39,7 @@ class knn(object):
         
         nn = np.argsort(dist,axis=0)[:self.k]
         dist = np.sort(dist,axis=0)[:self.k]
-        ind = np.arange(len(y_test))
+        ind = np.arange(len(X_test))
         if self.weighted:
             w = 1/(dist+1e-10)
             sum_w = np.sum(w,axis=0)
