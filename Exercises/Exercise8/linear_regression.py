@@ -1,7 +1,15 @@
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-from knn import knn
+import knn
+
+'''
+Goals:
+    
+    1. Compare the performance of linear regression and k-nn to predict solar particle flux.
+    2. Adapt the linear regression algorithm to work as a classifier and use it to classify the MNIST dataset.
+        
+'''
 
 class linear_regression(object):
     def __init__(self):  
@@ -26,7 +34,8 @@ def split_train_test(X,y,percent_train=0.9):
     
 def mse(p,y):
     return np.mean((p-y)**2)
-    
+
+#Builds an array with all 0's but add '1' where position of 1 is specified from y
 def onehot(y):
     oh = np.zeros((len(y),np.amax(y)+1)) 
     oh[np.arange(len(y)),y]=1
@@ -38,28 +47,50 @@ def accuracy(y_true,y_pred):
 if __name__ == "__main__":  
     
     plt.close('all')
+    
     print('Solar particle dataset')
-    X = np.load('particles_X.npy')
-    y = np.load('particles_y.npy')
+    
+    #Only choose some of the data set
+    X = np.load('particles_X.npy')[:10000]
+    y = np.load('particles_y.npy')[:10000]  
     
     X_train, X_test, y_train, y_test = split_train_test(X,y)
-    #model = linear_regression()
     
-    model = knn(classify=False, distance = 'Manhattan')
-    
-      
+    #------------------------------------Linear Regression---------------------
+    print("Model using Linear Regression")
+    modelLinReg = linear_regression()
+
     start = time.time()
-    model.fit(X_train, y_train)
+    modelLinReg.fit(X_train, y_train)
     elapsed_time = time.time()-start
     
     print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
     
     start = time.time()       
-    pred = model.predict(X_test)
+    pred = modelLinReg.predict(X_test)
     elapsed_time = time.time()-start
     print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
     print('Mean squared error: {0:.6f} '.format(mse(pred,y_test)))
         
     plt.plot(y_test,pred,'.')
+    print()
     
+    #-----------------------------------Knn------------------------------------
+    print("Model using KNN")
+    modelKnn = knn.knn(classify=False, distance = 'Manhattan')
+    
+    start = time.time()
+    modelKnn.fit(X_train, y_train)
+    elapsed_time = time.time()-start
+    
+    print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
+    
+    start = time.time()       
+    pred = modelKnn.predict(X_test)
+    elapsed_time = time.time()-start
+    print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
+    print('Mean squared error: {0:.6f} '.format(mse(pred,y_test)))
+        
+    plt.plot(y_test,pred,'.')
+    print()  
     
