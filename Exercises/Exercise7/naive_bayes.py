@@ -1,8 +1,13 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
 import time 
-import sys
+
+'''
+Goal - Use Naive bayes with real valued attributes in 'predict3()'
+
+    predict1() and predict2() both use binary values for attributes
+    predict3() uses 0-255 valued attributes (real valued attributes)
+'''
 
 class naive_bayes():
     def __init__(self):  
@@ -23,7 +28,6 @@ class naive_bayes():
             self.means[i] = np.mean(X[y==i],axis=0) + 1e-2 #smoothing
             self.stds[i] = np.std(X[y==i],axis=0) + 1e-2 #smoothing
     
-    
     #For num 1 on exercise
     def predict1(self,x_test):
         pred =  np.zeros(x_test.shape[0],dtype=int)
@@ -42,7 +46,6 @@ class naive_bayes():
     Elapsed_time testing: 0.605708 secs
     Accuracy: 0.840714 
     '''
-    
     
     #For num 2 on exercise
     def predict2(self,x_test):
@@ -168,23 +171,4 @@ if __name__ == "__main__":
     elapsed_time = time.time()-start
     print('Elapsed_time testing: {0:.6f} secs'.format(elapsed_time))   
     print('Accuracy: {0:.6f} '.format(accuracy(pred3,y_test)))
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
