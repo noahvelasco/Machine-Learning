@@ -8,9 +8,6 @@ Goals:
     
     1. Compare the performance of linear regression and k-nn to predict solar particle flux.
     2. Adapt the linear regression algorithm to work as a classifier and use it to classify the MNIST dataset.
-        
-    
-    TODO: Minute 60-84 of lecture recording
 '''
 
 class linear_regression(object):
@@ -69,8 +66,7 @@ if __name__ == "__main__":
     
     start = time.time()
     modelLinReg.fit(X_train, y_train)
-    elapsed_time = time.time()-start
-        
+    elapsed_time = time.time()-start  
     print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
     
     start = time.time()       
@@ -88,7 +84,6 @@ if __name__ == "__main__":
     start = time.time()
     modelKNN.fit(X_train, y_train)
     elapsed_time = time.time()-start
-    
     print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
     
     start = time.time()       
@@ -118,8 +113,8 @@ if __name__ == "__main__":
     oh_y_train = onehot(y_train)    #convert train data to onehot
     modelLRC.fit(X_train,oh_y_train)
     elapsed_time = time.time()-start
-    
     print('Elapsed_time training  {0:.6f} '.format(elapsed_time))  
+    
     start = time.time()
     #When we predict, modelLRC will return the a nx1 list of classifications - convert predicted to onehot representation of X_test and get argmax(classification)
     pred_LRC = np.argmax(modelLRC.predict(X_test),axis=1)
