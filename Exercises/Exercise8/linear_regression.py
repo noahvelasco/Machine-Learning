@@ -35,8 +35,7 @@ def split_train_test(X,y,percent_train=0.9):
 def mse(p,y):
     return np.mean((p-y)**2)
 
-#Classification with regression
-#Builds an array with all 0's but add '1' where position of 1 is specified from y
+#Used for regression classification - Builds an array with all 0's but add '1' where position of 1 is specified from y
 def onehot(y):
 
     oh = np.zeros((len(y), np.amax(y)+1)) 
@@ -60,7 +59,7 @@ if __name__ == "__main__":
     
     X_train, X_test, y_train, y_test = split_train_test(X,y)
     
-    #------------------------------------Linear Regression---------------------
+    #------------------------------Linear Regression---------------------------
     print("Model using Linear Regression")
     modelLinReg = linear_regression()
     
@@ -77,7 +76,7 @@ if __name__ == "__main__":
     plt.plot(y_test,pred_LR,'o')
     print()
     
-    #-----------------------------------KNN------------------------------------
+    #----------------------------Linear Regression with KNN--------------------
     print("Model using KNN")
     modelKNN = knn.knn(classify=False, distance = 'Manhattan')
     
@@ -106,7 +105,7 @@ if __name__ == "__main__":
     '''
         In order to use Linear regression as a classifier we must follow the steps:
             1. Use 'onehot()' which converts the the y_train data to onehot
-            2. Predict the data then convert it to onehot and get argmax(classification) of each row
+            2. Predict the data then get argmax(classification) of each row
     '''
     modelLRC = linear_regression()
     start = time.time()
@@ -123,7 +122,7 @@ if __name__ == "__main__":
     #print('Mean squared error: {0:.6f} '.format(mse(pred_LRC,y_test))) #not needed here since we are using a classification approach
     print('Accuracy:',np.sum(pred_LRC==y_test)/len(y_test))
     print()  
-    
+ 
 '''
 --- Solar particle dataset using 10000 samples ---
 
