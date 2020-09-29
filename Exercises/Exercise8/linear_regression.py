@@ -67,7 +67,6 @@ if __name__ == "__main__":
     print("Model using Linear Regression")
     modelLinReg = linear_regression()
     
-    
     start = time.time()
     modelLinReg.fit(X_train, y_train)
     elapsed_time = time.time()-start
@@ -81,7 +80,6 @@ if __name__ == "__main__":
     print('Mean squared error: {0:.6f} '.format(mse(pred_LR,y_test)))
     plt.plot(y_test,pred_LR,'o')
     print()
-    
     
     #-----------------------------------KNN------------------------------------
     print("Model using KNN")
