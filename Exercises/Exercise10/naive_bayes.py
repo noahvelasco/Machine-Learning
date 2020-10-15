@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from utils import *
 import time 
 
 class naive_bayes():
-    def __init__(self):  
+    def __init__(self):
         self.n_classes = None
         self.mean_att_given_class = None
         self.var_att_given_class = None
@@ -32,7 +33,7 @@ class naive_bayes():
         pred = np.argmax(probs,axis=1)
         return pred
    
-if __name__ == "__main__":  
+if __name__ == "__main__":
     
     data_path = 'C:\\Users\\npizz\\Desktop\\Machine-Learning\\Exams\\Exam1\\'  # Use your own path here
     X = np.load(data_path+'mnist_X.npy').reshape(-1,28*28)/255
@@ -51,5 +52,3 @@ if __name__ == "__main__":
     elapsed_time = time.time()-start
     print('Elapsed_time testing: {0:.6f} secs'.format(elapsed_time))   
     print('Accuracy: {0:.6f} '.format(accuracy(pred,y_test)))
-   
-    
