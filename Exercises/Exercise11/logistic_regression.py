@@ -15,7 +15,12 @@ Goals:
 
         Momentum Summary -
             > Keep a running estimate of the gradient, combining the previous estimate and the gradient computed
-              from the current batch
+              from the current 
+              
+              The idea of momentum-based optimizers is to remember the previous gradients 
+              from recent optimization steps and to use them to help to do a better job of 
+              choosing the direction to move next, acting less like a drunk student walking 
+              downhill and more like a rolling ball. - https://gluon.mxnet.io/chapter06_optimization/momentum-scratch.html
         
         Label Smoothing Summary-
             > y_smooth = y_oh oh(α)+ ൗൗ(1−α)n_classesfor α<1 Notice that 𝜎𝑧=1 when 𝑧=∞ --> Look at Sigmoid graph and equation and plug in inf,which yields 1
@@ -33,8 +38,12 @@ def sigma(X,W):
 class logistic_regression(object):
     def __init__(self):  
         self.W = None
+        
     
-    def fit(self,X,y,batch_size=512,lr=0.1, tol =0.001, max_it = 100, display_period=-1,lr_reduction=.25,patience=3): 
+    def fit(self,X,y,batch_size=512,lr=0.1, tol =0.001, max_it = 100, display_period=-1,lr_reduction=.25,patience=3, momentum=.9,label_smoothing=.9): 
+        
+        
+        
         if display_period==-1:
             display_period = max_it+1
         X1 = np.hstack((X,np.ones((X.shape[0],1))))
@@ -46,15 +55,23 @@ class logistic_regression(object):
         y_oh = one_hot(y)
         self.W =  (np.random.random((y_oh.shape[1],m))-0.5)/100    # w is kxm
         
+        prevGradient = 0 #momentum - will hold the average gradient of previous batch
         for i in range(1,max_it+1):
             ind = np.random.permutation(X1.shape[0])%batches_per_epoch
+            
             for b in range(batches_per_epoch):
                 batch = (ind == b)
                 S = sigma(X1[batch],self.W)
                 Error = (S - y_oh[batch])
                 G = (Error*S*(1-S)).T
-                Gradient = np.matmul(G,X1[batch])/batch_size
-                self.W = self.W - lr*Gradient
+                currGradient = np.matmul(G,X1[batch])/batch_size 
+                
+                #Momentum
+                currGradient = (currGradient * momentum) + (1-momentum)*prevGradient #prevGrad = avg grad estimate from previous batch
+                prevGradient = np.mean(currGradient)
+                
+                self.W = self.W - lr*currGradient
+                
             S = sigma(X1,self.W)
             Error = (S - y_oh)
             pred = np.argmax(S,axis=1)
@@ -73,6 +90,14 @@ class logistic_regression(object):
                 print('> Proof: (', i,'%patience==0) and (mse_train=',mse_train,'>=',np.min(self.mse_list[:-1]), '= np.min(self.mse_list[:-1]))',)
                 lr = lr*lr_reduction
                 print('> New lr = ', lr)
+                
+                
+                
+                
+                
+                
+                
+                
     def predict(self,X):
         X1 = np.hstack((X,np.ones((X.shape[0],1))))
         self.S = sigma(X1,self.W)
@@ -96,7 +121,7 @@ if __name__ == "__main__":
             > Smaller batches allowed to see MSE fluctuate for adaptive learning
     
     '''
-    model.fit(X_train,y_train,batch_size=20, lr=1, max_it = 20, display_period=1)
+    model.fit(X_train,y_train,batch_size=10, lr=.2, max_it = 20, display_period=1)
     
     pred_test =  model.predict(X_test)
     
