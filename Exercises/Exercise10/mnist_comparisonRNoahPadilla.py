@@ -6,7 +6,7 @@ import logistic_regressionRNoahPadilla as log_reg
 
 if __name__ == "__main__":
     
-    data_path = 'C:\\Users\\npizz\\Desktop\\Machine-Learning\\Exams\\Exam1\\'  # Use your own path here
+    data_path = 'C:\\Users\\npizz\\Desktop\\Machine-Learning\\Exercises\\Exercise10\\'
     X = np.load(data_path+'mnist_X.npy').reshape(-1,28*28)/255
     y = np.load(data_path+'mnist_y.npy')
     X_train, X_test, y_train, y_test = split_train_test(X,y,seed=20)
