@@ -49,7 +49,7 @@ class logistic_regression(object):
 if __name__ == "__main__":  
     plt.close('all')
     
-    data_path = 'C:\\Users\\OFuentes\\Documents\\Research\\data\\'  # Use your own path here
+    data_path = 'C:\\Users\\npizz\\Desktop\\Machine-Learning\\Exercises\\Exercise11\\'  # Use your own path here
     
     X = np.load(data_path+'mnist_X.npy').reshape(-1,28*28)/255
     y = np.load(data_path+'mnist_y.npy')
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     
     model = logistic_regression()
     
-    model.fit(X_train,y_train, lr=1, max_it = 100, display_period=1)
+    model.fit(X_train,y_train, lr=1, max_it = 20, display_period=1)
     
     pred_test =  model.predict(X_test)
     
