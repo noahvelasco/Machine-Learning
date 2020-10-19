@@ -3,7 +3,8 @@ from utils import *
 import math 
 
 '''
-Author: @Noah Padilla
+Authors: @R Noah Padilla
+         @Noshin R Habib
 
 Goals:
     Given Logistic Regression Machine Learning Model, apply the below 
@@ -38,11 +39,10 @@ def sigma(X,W):
 class logistic_regression(object):
     def __init__(self):  
         self.W = None
-        
     
-    def fit(self,X,y,batch_size=512,lr=0.1, tol =0.001, max_it = 100, display_period=-1,lr_reduction=.25,patience=3, momentum=.9,label_smoothing=.9): 
+    def fit(self,X,y,batch_size=512,lr=0.1, tol =0.001, max_it = 100, display_period=-1,lr_reduction=.25,patience=3, momentum=.9,label_smoothing=.95): 
         
-        
+        self.n_classes = np.amax(y)+1
         
         if display_period==-1:
             display_period = max_it+1
@@ -53,7 +53,10 @@ class logistic_regression(object):
         self.acc_list, self.mse_list = [], []
         n, m = X1.shape                  # the training set has n examples and m attributes
         y_oh = one_hot(y)
-        self.W =  (np.random.random((y_oh.shape[1],m))-0.5)/100    # w is kxm
+        
+        #Label smoothing - replace y_oh with y_smooth
+        y_smooth = (y_oh * label_smoothing) + (1-label_smoothing)/self.n_classes
+        self.W =  (np.random.random((y_smooth.shape[1],m))-0.5)/100    # w is kxm
         
         prevGradient = 0 #momentum - will hold the average gradient of previous batch
         for i in range(1,max_it+1):
@@ -62,18 +65,16 @@ class logistic_regression(object):
             for b in range(batches_per_epoch):
                 batch = (ind == b)
                 S = sigma(X1[batch],self.W)
-                Error = (S - y_oh[batch])
+                Error = (S - y_smooth[batch])
                 G = (Error*S*(1-S)).T
+                #Momentum - mess with gradient so it can converge to min faster
                 currGradient = np.matmul(G,X1[batch])/batch_size 
-                
-                #Momentum
                 currGradient = (currGradient * momentum) + (1-momentum)*prevGradient #prevGrad = avg grad estimate from previous batch
                 prevGradient = np.mean(currGradient)
-                
                 self.W = self.W - lr*currGradient
                 
             S = sigma(X1,self.W)
-            Error = (S - y_oh)
+            Error = (S - y_smooth)
             pred = np.argmax(S,axis=1)
             acc = accuracy(y,pred)
             self.acc_list.append(acc)
@@ -90,13 +91,6 @@ class logistic_regression(object):
                 print('> Proof: (', i,'%patience==0) and (mse_train=',mse_train,'>=',np.min(self.mse_list[:-1]), '= np.min(self.mse_list[:-1]))',)
                 lr = lr*lr_reduction
                 print('> New lr = ', lr)
-                
-                
-                
-                
-                
-                
-                
                 
     def predict(self,X):
         X1 = np.hstack((X,np.ones((X.shape[0],1))))
@@ -119,7 +113,6 @@ if __name__ == "__main__":
     '''
     fit invokation: 
             > Smaller batches allowed to see MSE fluctuate for adaptive learning
-    
     '''
     model.fit(X_train,y_train,batch_size=10, lr=.2, max_it = 20, display_period=1)
     
@@ -130,10 +123,8 @@ if __name__ == "__main__":
     print('Test MSE {:.6f}, Test accuracy: {:.6f}'.format(mse(model.S, one_hot(y_test)),accuracy(pred_test,y_test)))
     print(cm)
     
-    
     fig, ax = plt.subplots(1,2,figsize=(10,5))
     ax[0].plot(model.mse_list)
     ax[0].set_title('Training mean-squared error')
     ax[1].plot(model.acc_list)
     ax[1].set_title('Training accuracy')
-    
