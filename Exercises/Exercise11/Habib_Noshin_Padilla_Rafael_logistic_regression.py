@@ -128,3 +128,41 @@ if __name__ == "__main__":
     ax[0].set_title('Training mean-squared error')
     ax[1].plot(model.acc_list)
     ax[1].set_title('Training accuracy')
+    '''
+Total amount of samples:  63000
+Total batches per epoch:  6300
+Epoch: 1/20, mse = 0.017624, accuracy = 0.902175
+Epoch: 2/20, mse = 0.015983, accuracy = 0.909667
+Epoch: 3/20, mse = 0.015386, accuracy = 0.912540
+Epoch: 4/20, mse = 0.014898, accuracy = 0.914889
+Epoch: 5/20, mse = 0.014673, accuracy = 0.916508
+Epoch: 6/20, mse = 0.014369, accuracy = 0.917952
+Epoch: 7/20, mse = 0.014135, accuracy = 0.917698
+Epoch: 8/20, mse = 0.014020, accuracy = 0.919000
+Epoch: 9/20, mse = 0.013902, accuracy = 0.920190
+Epoch: 10/20, mse = 0.013771, accuracy = 0.920952
+Epoch: 11/20, mse = 0.013755, accuracy = 0.920556
+Epoch: 12/20, mse = 0.013713, accuracy = 0.921762
+Epoch: 13/20, mse = 0.013789, accuracy = 0.921016
+Epoch: 14/20, mse = 0.013484, accuracy = 0.922365
+Epoch: 15/20, mse = 0.013530, accuracy = 0.922095
+> Learning Rate changed when: epoch= 15 ;lr= 0.2 ;lr_red= 0.25 ;patience= 3
+> Proof: ( 15 %patience==0) and (mse_train= 0.013529812382739247 >= 0.01348361360301765 = np.min(self.mse_list[:-1]))
+> New lr =  0.05
+Epoch: 16/20, mse = 0.013335, accuracy = 0.923286
+Epoch: 17/20, mse = 0.013330, accuracy = 0.923540
+Epoch: 18/20, mse = 0.013290, accuracy = 0.923476
+Epoch: 19/20, mse = 0.013280, accuracy = 0.923683
+Epoch: 20/20, mse = 0.013284, accuracy = 0.923651
+Test MSE 0.015997, Test accuracy: 0.917286
+[[655   0   1   1   0   1   5   0   6   1]
+ [  1 790   1   3   0   4   1   0  13   1]
+ [  7   6 657   7   9   2  11  11  29   3]
+ [  6   5  22 639   2  18   2   7  19   8]
+ [  2   0   1   1 635   0   7   0   5  22]
+ [ 11   4   0  21  16 536  18   5  20   6]
+ [ 10   2   4   0   6   6 660   0   4   0]
+ [  3   3  13   1   1   0   1 624   3  13]
+ [  5  10   6  13   6  16   5   2 605   7]
+ [  4   1   3   9  32   8   0  21   9 620]]
+    '''
