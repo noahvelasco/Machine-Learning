@@ -60,7 +60,7 @@ class logistic_regression(object):
 if __name__ == "__main__":  
     plt.close('all')
     
-    data_path = 'C:\\Users\\noshin\\Desktop\\MachineLearning\\'  # Use your own path here
+    data_path = 'C:\\Users\\npizz\\Desktop\\Machine-Learning\\Exercises\\Exercise11\\'  # Use your own path here
     
     X = np.load(data_path+'mnist_X.npy').reshape(-1,28*28)/255
     y = np.load(data_path+'mnist_y.npy')
