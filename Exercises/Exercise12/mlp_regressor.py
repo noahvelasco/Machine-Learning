@@ -4,7 +4,7 @@ import math
 import time
 from sklearn.neural_network import MLPRegressor
 
-if __name__ == "__main__":  
+if __name__ == "__main__":
     plt.close('all')
     
     data_path = 'C:\\Users\\npizz\\Desktop\\Machine-Learning\\Exercises\\Exercise12\\'  # Use your own path here
@@ -13,8 +13,15 @@ if __name__ == "__main__":
     y = np.load(data_path+'particles_y.npy').astype(np.float32)
   
     X_train, X_test, y_train, y_test = split_train_test(X,y,seed=20)
-    
-    model = MLPRegressor(solver='adam', alpha=1e-5, hidden_layer_sizes=(5), verbose=True, random_state=1)
+    '''
+    MLPRegressor(hidden_layer_sizes=(100, ), activation='relu', *, solver='adam', 
+                 alpha=0.0001, batch_size='auto', learning_rate='constant', learning_rate_init=0.001, 
+                 power_t=0.5, max_iter=200, shuffle=True, random_state=None, tol=0.0001, verbose=False, 
+                 warm_start=False, momentum=0.9, nesterovs_momentum=True, early_stopping=False, 
+                 validation_fraction=0.1, beta_1=0.9, beta_2=0.999, epsilon=1e-08, n_iter_no_change=10, 
+                 max_fun=15000)
+    '''
+    model = MLPRegressor(solver='adam', alpha=1e-5, batch_size = 100 ,learning_rate='adaptive',momentum=0.95,  hidden_layer_sizes=(300), verbose=True, random_state=1)
     
     start = time.time()
     model.fit(X_train, y_train)
@@ -28,8 +35,8 @@ if __name__ == "__main__":
     print('Elapsed_time testing  {0:.6f} '.format(elapsed_time))   
     print('Mean-squared error: {0:.6f}'.format(mse(y_test,pred)))
           
-   '''
-   Iteration 1, loss = 0.03309577
+'''
+Iteration 1, loss = 0.03309577
 Iteration 2, loss = 0.01980742
 Iteration 3, loss = 0.01960576
 Iteration 4, loss = 0.01958716
