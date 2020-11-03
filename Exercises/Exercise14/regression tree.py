@@ -84,7 +84,7 @@ if __name__ == "__main__":
     times = []
     mse_train = []
     mse_test = []
-    
+
     for MaxLeafNodes in range(100,5000,500):
         depths.append(best_depth) 
         max_leafnodes.append(MaxLeafNodes)
