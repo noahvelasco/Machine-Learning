@@ -45,11 +45,11 @@ if __name__ == "__main__":
     all_mse=[]      #Holds all the mses's
     
     #tested with small vals prior so 10-70 is a reasable threshold
-    for est in range(10,70,10):
+    for est in range(50,350,50):
         print("> Num of estimators: ", est)
         estimators.append(est)
         
-        model = RandomForestRegressor(n_estimators=est,random_state=0)
+        model = RandomForestRegressor(max_depth = 12,n_estimators=est,random_state=0)
         
         start = time.time()
         model.fit(X_train, y_train)
@@ -75,17 +75,97 @@ if __name__ == "__main__":
     print("MSE: ", np.min(all_mse))
     
 '''
---- RandomForestRegressor(n_estimators=1,random_state=0) ---
-RANDOM FOREST REGRESSOR
-Elapsed time training 13.133794 secs
-Elapsed time testing 0.200902 secs
-Ensemble mse: 0.076286
+RANDOM FOREST REGRESSOR - Only modifying estimators
+> Num of estimators:  10
+Elapsed time training 132.753099 secs
+Elapsed time testing 1.548245 secs
+mse: 0.042233
 
---- RandomForestRegressor(n_estimators=10,random_state=0) ---
-RANDOM FOREST REGRESSOR
-Elapsed time training 131.810516 secs
-Elapsed time testing 1.581896 secs
-Ensemble mse: 0.042233
+> Num of estimators:  20
+Elapsed time training 263.488964 secs
+Elapsed time testing 3.179020 secs
+mse: 0.040254
 
---- RandomForestRegressor(n_estimators=1,random_state=0) ---
+> Num of estimators:  30
+Elapsed time training 385.591375 secs
+Elapsed time testing 4.292018 secs
+mse: 0.039666
+
+> Num of estimators:  40
+Elapsed time training 512.790967 secs
+Elapsed time testing 5.907152 secs
+mse: 0.039384
+
+> Num of estimators:  50
+Elapsed time training 639.141176 secs
+Elapsed time testing 7.237906 secs
+mse: 0.039186
+
+> Num of estimators:  60
+Elapsed time training 742.210262 secs
+Elapsed time testing 8.695497 secs
+mse: 0.039052
+
+
+**-- LOWEST MSE stats --**
+Num of estimators:  60
+Train Time:  742.210262298584
+Test Time:  8.695496797561646
+MSE:  0.039052008375852744
+
+> Num of estimators:  100
+Elapsed time training 1271.615759 secs
+Elapsed time testing 67.963341 secs
+mse: 0.038782
+
+> Num of estimators:  150
+Elapsed time training 1977.593288 secs
+Elapsed time testing 1412.404979 secs
+mse: 0.038656
+-------------------------------------------------------------------------------
+
+RANDOM FOREST REGRESSOR - Only modifying estimators and max_depth=12
+> Num of estimators:  50
+Elapsed time training 276.178408 secs
+Elapsed time testing 0.961541 secs
+mse: 0.037777
+
+> Num of estimators:  100
+Elapsed time training 571.345402 secs
+Elapsed time testing 1.933005 secs
+mse: 0.037768
+
+> Num of estimators:  150
+Elapsed time training 855.273388 secs
+Elapsed time testing 2.904613 secs
+mse: 0.037766
+
+> Num of estimators:  200
+Elapsed time training 1125.475703 secs
+Elapsed time testing 3.815182 secs
+mse: 0.037763
+
+> Num of estimators:  250
+Elapsed time training 1409.710879 secs
+Elapsed time testing 4.409895 secs
+mse: 0.037763
+
+> Num of estimators:  300
+Elapsed time training 1669.788249 secs
+Elapsed time testing 5.799232 secs
+mse: 0.037762
+
+
+**-- LOWEST MSE stats --**
+Num of estimators:  300
+Train Time:  1669.7882494926453
+Test Time:  5.799232482910156
+MSE:  0.03776189518489129
+
+
+
+
+
+
+
 '''
