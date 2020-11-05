@@ -4,7 +4,6 @@ Created on Thu Nov  5 11:37:08 2020
 
 @author: R Noah Padilla
 """
-
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.decomposition import PCA
@@ -13,7 +12,6 @@ import numpy as np
 from utils import *
 import time
 import math
-
 
 if __name__ == "__main__":
 
@@ -80,7 +78,6 @@ if __name__ == "__main__":
         
         #update the number of principle components
         pc += 1
-        
         
     '''
     >OUTPUT IF MODEL IS DECISION TREE and PC IS 150
