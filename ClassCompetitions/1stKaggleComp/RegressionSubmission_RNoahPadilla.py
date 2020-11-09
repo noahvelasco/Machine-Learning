@@ -31,9 +31,13 @@ import pandas as pd
 if __name__ == "__main__":
     
     #Over 250,000 train data samples and 60,000 test data samples
-    X_train = pd.read_csv('.\\x_train.csv',header=None).to_numpy()[:100]
-    y_train = pd.read_csv('.\\y_train.csv',header=None).to_numpy()[:100]
-    X_test = pd.read_csv('.\\x_test.csv',header=None).to_numpy()[:100]
+    #X_train = pd.read_csv('.\\x_train.csv',header=None).to_numpy()
+    #y_train = pd.read_csv('.\\y_train.csv',header=None).to_numpy()
+    #X_test = pd.read_csv('.\\x_test.csv',header=None).to_numpy()
+    
+    X_train = np.load('x_train.npy').astype(np.float32)
+    X_test = np.load('x_test.npy').astype(np.float32)
+    y_train = np.load('y_train.npy').astype(np.float32)
     
     '''
     class sklearn.ensemble.RandomForestRegressor(n_estimators=100, *, 
@@ -49,6 +53,7 @@ if __name__ == "__main__":
                                                  ccp_alpha=0.0, max_samples=None)
     n_estimators - The number of trees in the forest.
     '''
+    
     model = RandomForestRegressor(max_depth = 12,n_estimators=300,random_state=0)
     
     start = time.time()
@@ -80,8 +85,10 @@ if __name__ == "__main__":
     df = pd.DataFrame(cars, columns= ['Brand', 'Price'])
 
     '''
+    
     #Export the predictions
     print("NOW EXPORTING...")
+    
     
     #Set up the layout
     int_indices = np.arange(1,len(pred)+1)
@@ -94,3 +101,18 @@ if __name__ == "__main__":
     df.to_csv('Predictions.csv',index=False)
     
     print("...FINISHED EXPORTING")
+    '''
+
+---- 1st submission ---- using Random Forest Regressor
+
+Elapsed time training 2881.168830 secs
+Elapsed time testing 3.078863 secs
+NOW EXPORTING...
+...FINISHED EXPORTING
+
+Elapsed time training 2760.919721 secs
+Elapsed time testing 2.866538 secs
+NOW EXPORTING...
+...FINISHED EXPORTING
+
+    '''
