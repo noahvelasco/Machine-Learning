@@ -1,0 +1,11 @@
+fig, ax = plt.subplots()
+ax.plot(history.history['accuracy'],label = 'train')
+ax.plot(history.history['val_accuracy'],label = 'test')
+ax.set_title('Accuracy')
+ax.legend(loc='lower right')
+fig, ax = plt.subplots()
+ax.plot(history.history['loss'],label = 'train')
+ax.plot(history.history['val_loss'],label = 'test')
+ax.set_title('Loss')
+ax.legend(loc='upper right')
+
