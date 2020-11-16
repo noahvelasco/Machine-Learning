@@ -76,10 +76,10 @@ if __name__ == "__main__":
     #model = MLPRegressor(solver='adam', activation='relu' ,  alpha=1e-8,learning_rate_init=0.001,batch_size = 100 ,learning_rate='adaptive', hidden_layer_sizes=(27,100),early_stopping = True, verbose=True, random_state=1)
     
     #support vector machine
-    model = svm.SVR(kernel = 'poly', verbose=True)
+    model = svm.SVR( gamma='scale' ,verbose=True)
     
     start = time.time()
-    model.fit(X_train, y_train)
+    model.fit(X_train, y_train.ravel())
     elapsed_time = time.time()-start
     print('Elapsed time training {:.6f} secs'.format(elapsed_time))
     
@@ -109,18 +109,14 @@ if __name__ == "__main__":
     
     #Export the predictions
     print("NOW EXPORTING...")
-    
-    
     #Set up the layout
     int_indices = np.arange(1,len(pred)+1)
     str_indices = []
     for i in range(len(int_indices)):
         str_indices.append(str(int_indices[i]))
-    
     df = pd.DataFrame({"ID": str_indices,
                    "Prediction": pred })
     df.to_csv('Predictions_SVR.csv',index=False)
-    
     print("...FINISHED EXPORTING")
     '''
 
@@ -288,10 +284,4 @@ Elapsed time training 199.945797 secs
 Elapsed time testing 0.279867 secs
 NOW EXPORTING...
 ...FINISHED EXPORTING
-
-
-
-
-
-
     '''
