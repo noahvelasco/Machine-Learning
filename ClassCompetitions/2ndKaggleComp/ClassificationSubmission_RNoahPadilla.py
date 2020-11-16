@@ -34,7 +34,9 @@ Data Description:
 
 """
 
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn.decomposition import PCA
 import numpy as np
 import pandas as pd
 from utils import *
@@ -59,28 +61,56 @@ if __name__ == "__main__":
                                                beta_2=0.999, epsilon=1e-08, n_iter_no_change=10, max_fun=15000)
     '''
     
+    #model = MLPRegressor(solver='adam', activation='relu' ,  alpha=1e-8,learning_rate_init=0.001,batch_size = 100 ,learning_rate='adaptive', hidden_layer_sizes=(27,100),early_stopping = True, verbose=True, random_state=1)
+    model = MLPClassifier(hidden_layer_sizes=(27,100) , alpha=1e-8 , batch_size=100, learning_rate='adaptive' , early_stopping=True, verbose=True)
     
-    model = MLPClassifier(hidden_layer_sizes=(100, ) , alpha=1e-5 , batch_size=100, learning_rate='adaptive' , early_stopping=True, verbose=True)
+    '''
+    Use PCA and KNN instead - mlp giving bad accuracies
+    
+    #TRANSFORM
+    pca = PCA(n_components=12)
+    pca.fit(x_train)
+    ev = pca.explained_variance_ratio_
+    cum_ev = np.cumsum(ev)
+    cum_ev = cum_ev/cum_ev[-1]
+    
+    X_train_t = pca.transform(x_train)
+    X_test_t = pca.transform(x_practice_test)
+    
+    model = KNeighborsClassifier(n_neighbors=3)
+    '''
     
     #Fit the training data
     start = time.time()
-    model.fit(x_train, y_train.ravel())
+    model.fit(x_train, y_train)
     elapsed_time = time.time()-start
-    print('Elapsed_time training  {0:.6f} secs'.format(elapsed_time))  
+    print('Elapsed time training  {0:.6f} secs'.format(elapsed_time))  
     
-    #Test on test set
+    #Test on practice test set - get a 99% accuracy
     start = time.time()
-    pred = model.predict(x_practice_test)
+    pred = model.predict(x_practice_test).reshape(-1,1)
     elapsed_time = time.time()-start
     print('Elapsed time testing practice test set {0:.6f} secs'.format(elapsed_time))
     print('Accuracy on practice test set: {0:.6f}'.format(accuracy(y_practice_test,pred)))
     
-    '''
+    #Test the main test set to be submitted into kaggle
     start = time.time()       
-    pred = model.predict(x_test)
+    predMain = model.predict(x_test).reshape(-1,1)
     elapsed_time = time.time()-start
-    print('Elapsed_time testing  {0:.6f} secs'.format(elapsed_time))   
-    '''
+    print('> Elapsed time testing main test set {0:.6f} secs'.format(elapsed_time))   
     
+    predMain = predMain.ravel()
+    
+    #Export the predictions - pred must be in this dimension (55823,)
+    print("NOW EXPORTING...")
+    #Set up the layout
+    int_indices = np.arange(1,len(predMain)+1)
+    str_indices = []
+    for i in range(len(int_indices)):
+        str_indices.append(str(int_indices[i]))
+    df = pd.DataFrame({"ID": str_indices,
+                   "Prediction": predMain})
+    df.to_csv('Predictions_MLP.csv',index=False)
+    print("...FINISHED EXPORTING")
     
     
