@@ -23,6 +23,7 @@ https://www.kaggle.com/c/cs-43615361-in-class-competition
     
 """
 
+from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn import svm
@@ -73,18 +74,15 @@ if __name__ == "__main__":
     
     '''
     #mlp regressor best so far with a score of .01212
-    #model = MLPRegressor(solver='adam', activation='relu' ,  alpha=1e-8,learning_rate_init=0.001,batch_size = 100 ,learning_rate='adaptive', hidden_layer_sizes=(27,100),early_stopping = True, verbose=True, random_state=1)
-    
-    #support vector machine
-    model = svm.SVR( gamma='scale' ,verbose=True)
+    model = MLPRegressor(solver='adam', activation='relu' ,  alpha=1e-8,learning_rate_init=0.001,batch_size = 100 ,learning_rate='adaptive', hidden_layer_sizes=(300,150),early_stopping = True, verbose=True, random_state=1)
     
     start = time.time()
-    model.fit(X_train, y_train.ravel())
+    model.fit(x_train, y_train)
     elapsed_time = time.time()-start
     print('Elapsed time training {:.6f} secs'.format(elapsed_time))
     
     start = time.time()
-    pred = model.predict(X_test)
+    pred = model.predict(x_test)
     elapsed_time = time.time()-start
     print('Elapsed time testing {:.6f} secs'.format(elapsed_time))
     
@@ -116,7 +114,7 @@ if __name__ == "__main__":
         str_indices.append(str(int_indices[i]))
     df = pd.DataFrame({"ID": str_indices,
                    "Prediction": pred })
-    df.to_csv('Predictions_SVR.csv',index=False)
+    df.to_csv('Predictions_PCA.csv',index=False)
     print("...FINISHED EXPORTING")
     '''
 
