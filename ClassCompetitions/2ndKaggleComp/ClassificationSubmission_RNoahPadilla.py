@@ -60,13 +60,10 @@ if __name__ == "__main__":
                                                early_stopping=False, validation_fraction=0.1, beta_1=0.9, 
                                                beta_2=0.999, epsilon=1e-08, n_iter_no_change=10, max_fun=15000)
     '''
-    
-    #model = MLPRegressor(solver='adam', activation='relu' ,  alpha=1e-8,learning_rate_init=0.001,batch_size = 100 ,learning_rate='adaptive', hidden_layer_sizes=(27,100),early_stopping = True, verbose=True, random_state=1)
-    model = MLPClassifier(hidden_layer_sizes=(27,100) , alpha=1e-8 , batch_size=100, learning_rate='adaptive' , early_stopping=True, verbose=True)
+    model = MLPClassifier( activation='tanh' , hidden_layer_sizes=(150,300) , alpha=1e-8, batch_size=100, learning_rate='constant' , early_stopping=True, verbose=True)
     
     '''
-    Use PCA and KNN instead - mlp giving bad accuracies
-    
+    #Use PCA and KNN instead - mlp giving bad accuracies
     #TRANSFORM
     pca = PCA(n_components=12)
     pca.fit(x_train)
@@ -77,14 +74,16 @@ if __name__ == "__main__":
     X_train_t = pca.transform(x_train)
     X_test_t = pca.transform(x_practice_test)
     
-    model = KNeighborsClassifier(n_neighbors=3)
-    '''
+    #model = KNeighborsClassifier(n_neighbors=5)
+    model = MLPClassifier(hidden_layer_sizes=(300,100) , alpha=1e-8, batch_size=100, learning_rate='adaptive' , early_stopping=True, verbose=True)
     
-    #Fit the training data
+    '''
+    #-------------- Fit the training data - never comment out fit and both predicts
     start = time.time()
     model.fit(x_train, y_train)
     elapsed_time = time.time()-start
     print('Elapsed time training  {0:.6f} secs'.format(elapsed_time))  
+    
     
     #Test on practice test set - get a 99% accuracy
     start = time.time()
@@ -93,9 +92,26 @@ if __name__ == "__main__":
     print('Elapsed time testing practice test set {0:.6f} secs'.format(elapsed_time))
     print('Accuracy on practice test set: {0:.6f}'.format(accuracy(y_practice_test,pred)))
     
+    
+    #   >> PCA OUTPUT WITH n_components = 12 and KNN = 3<<
+    #Elapsed time training  1.949066 secs
+    #Elapsed time testing practice test set 10.999992 secs
+    #Accuracy on practice test set: 0.996983
+    
+    #   >> PCA OUTPUT WITH n_components = 12 and KNN = 5 <<
+    #Elapsed time training  2.013035 secs
+    #Elapsed time testing practice test set 9.682367 secs
+    #Accuracy on practice test set: 0.997133
+    
+    #PCA WITH n_components = 12 & MLP MLPClassifier(hidden_layer_sizes=(300,150) , alpha=1e-8 , batch_size=100, learning_rate='adaptive' , early_stopping=True, verbose=True)
+    #Elapsed time training  58.184154 secs
+    #Elapsed time testing practice test set 0.262874 secs
+    #Accuracy on practice test set: 0.997250
+    
+    '''
     #Test the main test set to be submitted into kaggle
     start = time.time()       
-    predMain = model.predict(x_test).reshape(-1,1)
+    predMain = model.predict(X_test_t).reshape(-1,1)
     elapsed_time = time.time()-start
     print('> Elapsed time testing main test set {0:.6f} secs'.format(elapsed_time))   
     
@@ -110,7 +126,6 @@ if __name__ == "__main__":
         str_indices.append(str(int_indices[i]))
     df = pd.DataFrame({"ID": str_indices,
                    "Prediction": predMain})
-    df.to_csv('Predictions_MLP.csv',index=False)
+    df.to_csv('Predictions_PCA.csv',index=False)
     print("...FINISHED EXPORTING")
-    
-    
+    '''
