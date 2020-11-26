@@ -31,6 +31,18 @@ converts them to a list of sentences, where each sentence is a list of words.
 import bs4 as bs
 import urllib.request
 import numpy as np
+'''
+TODO
+sent_embedder():
+        - receives a sentence, word embeddings dictionary, and the desired length of the sentence represention
+        - returns a 2D array containing each of the words embeddings | row = word and columns are the embedding values
+Purpose: 
+'''
+def sent_embedder(sent, emb, desLen):
+    #Array ingredients: number of words by length of the words embedding values
+    totWords = len(sent)
+    totEmbValues = emb.get('i')
+    return totEmbValues
 
 def read_embeddings(n=1000):
     #Fuentes: Reads n embeddings from file
@@ -86,7 +98,7 @@ if __name__ == "__main__":
    
     vocabulary_size = 22500        
     embedding = read_embeddings(vocabulary_size)
-    
+    '''
     #Fuentes: See if the protagonists appear in the embedding list    
     #Fuentes: I recommend increasing vocabulary size until all 3 appear in vocabulary
     for w in ['buck','dracula','holmes']:
@@ -95,4 +107,5 @@ if __name__ == "__main__":
         except:
             print(w,'is not in dictionary')
             pass
-            
+    '''
+    test = sent_embedder(word_lists[0], embedding,7)
