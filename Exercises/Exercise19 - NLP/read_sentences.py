@@ -22,6 +22,8 @@ converts them to a list of sentences, where each sentence is a list of words.
     3. Randomly split the data into training and testing.
     
     4. Train and test a system to determine the book each sentence belongs to.
+    
+    CLASSIFICATION PROBLEM
 
 '''
 
@@ -31,11 +33,11 @@ import urllib.request
 import numpy as np
 
 def read_embeddings(n=1000):
-    # Reads n embeddings from file
-    # Returns a dictionary were embedding[w] is the embeding of string w
+    #Fuentes: Reads n embeddings from file
+    #Fuentes: Returns a dictionary were embedding[w] is the embeding of string w
     embedding = {}
     count = 0
-    with open('glove.6B//glove.6B.50d.txt', encoding="utf8") as f: 
+    with open('glove.6B.50d.txt', encoding="utf8") as f: 
         for line in f: 
             count+=1
             ls = line.split(" ")
@@ -82,11 +84,11 @@ if __name__ == "__main__":
         print('min = {} max = {} mean = {:4f}'.format(np.min(lengths),np.max(lengths),np.mean(lengths)))
         
    
-    vocabulary_size = 5000        
+    vocabulary_size = 22500        
     embedding = read_embeddings(vocabulary_size)
     
-    # See if the protagonists appear in the embedding list    
-    # I recommend increasing vocabulary size until all 3 appear in vocabulary
+    #Fuentes: See if the protagonists appear in the embedding list    
+    #Fuentes: I recommend increasing vocabulary size until all 3 appear in vocabulary
     for w in ['buck','dracula','holmes']:
         try:
             print(w,'embedding:\n',embedding[w])
