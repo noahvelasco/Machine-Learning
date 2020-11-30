@@ -108,7 +108,7 @@ if __name__ == "__main__":
     #Elapsed time testing practice test set 0.262874 secs
     #Accuracy on practice test set: 0.997250
     
-    '''
+    
     #Test the main test set to be submitted into kaggle
     start = time.time()       
     predMain = model.predict(X_test_t).reshape(-1,1)
@@ -126,6 +126,6 @@ if __name__ == "__main__":
         str_indices.append(str(int_indices[i]))
     df = pd.DataFrame({"ID": str_indices,
                    "Prediction": predMain})
-    df.to_csv('Predictions_PCA.csv',index=False)
+    df.to_csv('Predictions.csv',index=False)
     print("...FINISHED EXPORTING")
-    '''
+    
