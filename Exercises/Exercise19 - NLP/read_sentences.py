@@ -142,7 +142,7 @@ if __name__ == "__main__":
     for sent in allSentences:
         all_word_emb.append(sent_embedder(sent, embedding,desiredLength))
 
-    print("Total word embeddings calculated: ",len(all_word_emb)) #should be 12260 bc thats how many sentences are in all 3 books combined
+    print("Total sentence embeddings calculated: ",len(all_word_emb)) #should be 12260 bc thats how many sentences are in all 3 books combined
     
     
     #Seperate data into X and y
